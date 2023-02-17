@@ -31,3 +31,18 @@ exports.create = async (req, res) => {
         return res.status(400).json(err);
     }
 };
+
+// Cette fonction retourne une liste de toutes les catégories disponibles
+exports.findAll = async (req, res) => {
+    // Essayez d'effectuer la requête
+    try {
+        // Récupérez toutes les catégories dans la base de données
+        const categories = await Category.find();
+        // Renvoyez la liste des catégories au client
+        return res.json(categories);
+        // Si la requête échoue
+    } catch (error) {
+        // Renvoyez une erreur 404 au client
+        return res.status(404).json(error);
+    }
+};

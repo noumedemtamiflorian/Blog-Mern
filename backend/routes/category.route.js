@@ -10,4 +10,7 @@ const router = express.Router();
 // Créer une catégorie
 router.post("/", categoryController.create);
 
+// Récupérer toutes les catégories
+router.get("/", categoryController.findAll);
+
 module.exports = router;
