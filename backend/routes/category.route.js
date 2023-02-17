@@ -16,4 +16,7 @@ router.get("/", categoryController.findAll);
 // Récupérer une catégorie avec un id donné
 router.get("/:id", categoryController.findOne);
 
+// Mettre à jour une catégorie
+router.put("/:id", categoryController.update);
+
 module.exports = router;

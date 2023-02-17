@@ -63,3 +63,24 @@ exports.findOne = async (req, res) => {
         return res.status(400).json({ message: error.message });
     }
 };
+
+// Mettre a jour la catégorie correspondant à l'ID
+exports.update = async (req, res) => {
+    try {
+        const category = await Category.findById(req.params.id);
+
+        // Mettre à jour le titre de la catégorie
+        category.title = req.body.title;
+
+        // Enregistrer les modifications
+        await category.save();
+
+        // Retourner un message de succès
+        return res.json({
+            message: "Catégorie mise à jour avec succès",
+        });
+    } catch (error) {
+        // Retourner un message d'erreur
+        return res.status(400).json({ message: error.message });
+    }
+};
