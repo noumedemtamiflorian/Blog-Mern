@@ -5,4 +5,7 @@ const router = express.Router();
 // Créer un commentaire
 router.post("/", CommentController.create);
 
+// Mettre à jour un commentaire avec un id donné
+router.put("/:id", CommentController.update);
+
 module.exports = router;
