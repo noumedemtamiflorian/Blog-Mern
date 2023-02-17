@@ -32,5 +32,22 @@ CommentSchema.statics.createWithArticle = async (content, article) => {
     return savedComment;
 };
 
+// Fonction statique pour supprimer un commentaire avec son article
+CommentSchema.statics.deleteWithArticle = async (commentId) => {
+    // Récupération du modèle de commentaire
+    const Comment = mongoose.model("Comment");
+
+    // Suppression du commentaire
+    const deletedComment = await Comment.findByIdAndDelete(commentId);
+
+    // Mise à jour de l'article en supprimant le commentaire
+    await Article.findByIdAndUpdate(deletedComment.article, {
+        $pull: { comments: commentId },
+    });
+
+    // Retourner le commentaire supprimé
+    return deletedComment;
+};
+
 // Exporter le modèle de commentaire
 module.exports = mongoose.model("Comment", CommentSchema);
