@@ -4,6 +4,9 @@ const mongoose = require("mongoose");
 // Importer le modèle "Category"
 const Category = require("./category.model");
 
+// Importer le modèle "Comment"
+const Comment = require("./comment.model");
+
 // Create a Schema for an Article
 const Schema = mongoose.Schema;
 const ArticleSchema = new Schema({
@@ -50,6 +53,27 @@ ArticleSchema.statics.createWithCategory = async (
         return savedArticle; // Retourne le nouvel article
     } catch (error) {
         return error; // Retourne l'erreur
+    }
+};
+
+// Cette fonction static permet de supprimer un article ainsi que tous les commentaires associes
+ArticleSchema.statics.deleteWithCategory = async (id) => {
+    try {
+        // Récupération du modèle Article
+        const Article = mongoose.model("Article");
+        // Suppression de l'article
+        const deletedArticle = await Article.findByIdAndDelete(id);
+        // Suppression de la catégorie et des commentaires associés
+        await Promise.all([
+            Category.findByIdAndUpdate(deletedArticle.category, {
+                $pull: { articles: deletedArticle._id },
+            }),
+            Comment.deleteMany({ article: deletedArticle._id }),
+        ]);
+        // Retourne l'article supprimé
+        return deletedArticle;
+    } catch (error) {
+        return error;
     }
 };
 

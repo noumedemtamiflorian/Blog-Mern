@@ -1,5 +1,7 @@
 // Importer le modèle Article
 const Article = require("../models/article.model");
+const Comment = require("../models/comment.model");
+const Category = require("../models/category.model");
 
 // Exporter une fonction pour créer un nouvel article
 exports.create = async (req, res) => {
@@ -23,7 +25,7 @@ exports.create = async (req, res) => {
         return res.json(newArticle);
     } catch (err) {
         // Retourne un message d'erreur si la requête échoue
-        return res.status(403).json(err);
+        return res.status(403).json({ message: err.message });
     }
 };
 
@@ -41,7 +43,7 @@ exports.findOne = async (req, res) => {
         return res.json(article);
     } catch (err) {
         // Renvoie un code d'erreur 400 si une erreur se produit
-        return res.status(400).json(err);
+        return res.status(400).json({ message: err.message });
     }
 };
 
@@ -57,7 +59,7 @@ exports.findAll = async (req, res) => {
         return res.json(articles);
     } catch (err) {
         // Retourner une erreur 400 si le traitement échoue
-        return res.status(400).json(err);
+        return res.status(400).json({ message: err.message });
     }
 };
 
@@ -76,6 +78,25 @@ exports.update = async (req, res) => {
         return res.json(article);
     } catch (err) {
         // Retourner une erreur lorsque quelque chose ne va pas
-        return res.status(400).json(err);
+        return res.status(400).json({ message: err.message });
+    }
+};
+
+// Exporter une fonction asynchrone pour supprimer un article
+exports.delete = async (req, res) => {
+    // Essayez de trouver un article en fonction de l'ID spécifié
+    try {
+        const article = await Article.findById(req.params.id);
+        // Si aucun article n'est trouvé, renvoyez un message d'erreur
+        if (!article) {
+            return res.status(404).json({ message: "Article non trouvé" });
+        }
+        // Supprimez l'article et sa catégorie
+        await Article.deleteWithCategory(article._id);
+        // Renvoyez un message de confirmation une fois l'opération réussie
+        return res.json({ message: "Article supprimé avec succès" });
+    } catch (err) {
+        // Si une erreur se produit, renvoyez un message correspondant
+        return res.status(403).send({ message: err.message });
     }
 };

@@ -19,4 +19,7 @@ router.get("/:id", articleController.findOne);
 // Mettre à jour un article
 router.put("/:id", articleController.update);
 
+// Supprimer un article
+router.delete("/:id", articleController.delete);
+
 module.exports = router;
