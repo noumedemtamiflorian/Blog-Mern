@@ -27,6 +27,24 @@ exports.create = async (req, res) => {
     }
 };
 
+// Récupère un article en fonction de son identifiant
+exports.findOne = async (req, res) => {
+    try {
+        // Récupère l'article correspondant à l'identifiant fourni
+        const article = await Article.findById(req.params.id).populate({
+            // Récupère la catégorie et les commentaires de l'article
+            path: "category comments",
+            // Sélectionne le titre et le contenu des commentaires
+            select: "title content",
+        });
+        // Renvoie l'article au client
+        return res.json(article);
+    } catch (err) {
+        // Renvoie un code d'erreur 400 si une erreur se produit
+        return res.status(400).json(err);
+    }
+};
+
 // Exporter une fonction qui récupère tous les articles
 exports.findAll = async (req, res) => {
     try {

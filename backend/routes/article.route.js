@@ -13,4 +13,7 @@ router.post("/", articleController.create);
 // ajouter une route pour obtenir tous les articles
 router.get("/", articleController.findAll);
 
+// Récupérer un article avec son ID
+router.get("/:id", articleController.findOne);
+
 module.exports = router;
