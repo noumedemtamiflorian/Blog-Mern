@@ -1,12 +1,15 @@
-// Importation du module mongoose
+// Importer le module de mongoose
 const mongoose = require("mongoose");
-// Création d'un schéma pour le modèle Comment
+
+// Créer un schéma pour les commentaires
 const Schema = mongoose.Schema;
 const CommentSchema = new Schema({
-    // Définition d'un champ pour le contenu du commentaire
+    // Contenu du commentaire
     content: { type: String, required: true },
-    // Définition d'un champ pour référencer l'article
+
+    // Référence à l'article auquel le commentaire est lié
     article: { type: Schema.Types.ObjectId, ref: "Article", required: true },
 });
-// Export du modèle Comment
+
+// Exporter le modèle de commentaire
 module.exports = mongoose.model("Comment", CommentSchema);
