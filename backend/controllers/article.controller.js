@@ -60,3 +60,22 @@ exports.findAll = async (req, res) => {
         return res.status(400).json(err);
     }
 };
+
+// Exporter une fonction qui met à jour un article
+exports.update = async (req, res) => {
+    try {
+        // Récupérer les données du corps de la requête
+        const { title, content, description, image } = req.body;
+        // Trouver et mettre à jour un article avec les nouvelles données
+        const article = await Article.findByIdAndUpdate(
+            req.params.id,
+            { title, content, description, image },
+            { new: true }
+        );
+        // Retourner le nouvel article dans la réponse
+        return res.json(article);
+    } catch (err) {
+        // Retourner une erreur lorsque quelque chose ne va pas
+        return res.status(400).json(err);
+    }
+};

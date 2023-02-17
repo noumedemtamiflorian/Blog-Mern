@@ -16,4 +16,7 @@ router.get("/", articleController.findAll);
 // Récupérer un article avec son ID
 router.get("/:id", articleController.findOne);
 
+// Mettre à jour un article
+router.put("/:id", articleController.update);
+
 module.exports = router;
