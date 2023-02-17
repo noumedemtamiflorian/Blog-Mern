@@ -84,3 +84,22 @@ exports.update = async (req, res) => {
         return res.status(400).json({ message: error.message });
     }
 };
+
+// Cette fonction permet de supprimer une catégorie
+exports.delete = async (req, res) => {
+    try {
+        // Récupérer la catégorie à partir de son identifiant
+        const category = await Category.findById(req.params.id);
+        // Vérifier que la catégorie existe
+        if (!category) {
+            return res.status(404).send({ message: "Category not found" });
+        }
+        // Supprimer la catégorie et tous les articles associés
+        const response = await Category.deleteWithArticles(category._id);
+        // Retourner une réponse avec le statut 200 (OK)
+        return res.status(200).send(response);
+    } catch (err) {
+        // Retourner une réponse avec le statut 403 (Forbidden)
+        return res.status(403).send(err);
+    }
+};

@@ -19,4 +19,7 @@ router.get("/:id", categoryController.findOne);
 // Mettre à jour une catégorie
 router.put("/:id", categoryController.update);
 
+// Supprimer une catégorie
+router.delete("/:id", categoryController.delete);
+
 module.exports = router;
