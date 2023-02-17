@@ -13,4 +13,7 @@ router.post("/", categoryController.create);
 // Récupérer toutes les catégories
 router.get("/", categoryController.findAll);
 
+// Récupérer une catégorie avec un id donné
+router.get("/:id", categoryController.findOne);
+
 module.exports = router;

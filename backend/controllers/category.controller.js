@@ -1,5 +1,6 @@
 // Récupère le modèle pour la catégorie
 const Category = require("../models/category.model");
+const Article = require("../models/article.model");
 
 // Exporte une fonction pour créer une nouvelle catégorie
 exports.create = async (req, res) => {
@@ -28,7 +29,7 @@ exports.create = async (req, res) => {
     } catch (err) {
         console.log(err);
         // Si une erreur se produit, renvoie un code d'erreur et le message d'erreur
-        return res.status(400).json(err);
+        return res.status(400).json({ message: error.message });
     }
 };
 
@@ -43,6 +44,22 @@ exports.findAll = async (req, res) => {
         // Si la requête échoue
     } catch (error) {
         // Renvoyez une erreur 404 au client
-        return res.status(404).json(error);
+        return res.status(404).json({ message: error.message });
+    }
+};
+
+// Rechercher une catégorie par son identifiant
+exports.findOne = async (req, res) => {
+    // Essayer de trouver la catégorie
+    try {
+        const category = await Category.findById(req.params.id).populate({
+            path: "articles",
+            select: "title description image",
+        });
+        // Retourner la catégorie trouvée
+        return res.json(category);
+    } catch (error) {
+        // Si une erreur se produit, retourner un code d'erreur 400
+        return res.status(400).json({ message: error.message });
     }
 };
