@@ -1,13 +1,16 @@
-// Importation des modules nécessaires
+// Importer le module mongoose
 const mongoose = require("mongoose");
-const ansicolor = require("ansi-colors");
+
+// Importer le module dotenv
 const dotenv = require("dotenv");
 
 // Chargement des variables d'environnement
 dotenv.config();
 
-// Récupération des variables d'environnement
+// La chaîne de connexion à la base de données Mongo
 const MONGO_DB_URI = process.env.MONGO_DB_URI;
+
+// Le nom de la base de données
 const DATABASE_NAME = process.env.DATABASE_NAME;
 
 // Fonction asynchrone pour se connecter à la base de données
@@ -24,13 +27,9 @@ const connectDB = async () => {
         });
 
         // Affichage d'un message de confirmation
-        console.log(
-            ansicolor.yellow.bold.italic("-------------------------------")
-        );
-        console.log(ansicolor.green.bold.italic("MongoDB Connecté..."));
-        console.log(
-            ansicolor.yellow.bold.italic("-------------------------------")
-        );
+        console.log("-------------------------------");
+        console.log("MongoDB Connecté...");
+        console.log("-------------------------------");
     } catch (err) {
         // Affichage d'un message d'erreur
         console.error(err.message);

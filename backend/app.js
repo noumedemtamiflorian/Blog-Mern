@@ -1,11 +1,8 @@
-// Importer express pour créer un serveur
+// Importer le package Express pour créer l'application web
 const express = require("express");
 
 // Importer dotenv pour charger les variables d'environnement
 const dotenv = require("dotenv");
-
-// Importer ansi-colors pour afficher les messages en couleur dans la console
-const ansicolor = require("ansi-colors");
 
 // Importer le fichier db pour la connexion à la base de données
 const db = require("./config/db.js");
@@ -15,6 +12,9 @@ const articleRoute = require("./routes/article.route");
 
 // On importe le fichier des routes pour les catégories
 const categoryRoute = require("./routes/category.route");
+
+// Importer le routeur de commentaires
+const commentRoute = require("./routes/comment.route");
 
 // Chargement des variables d'environnement
 dotenv.config();
@@ -44,24 +44,17 @@ db();
 
 // On utilise Express pour créer une route pour les articles
 app.use("/api/articles", articleRoute);
-
 // On utilise Express pour créer une route pour les catégories
 app.use("/api/categories", categoryRoute);
+// utiliser la route de commentaire
+app.use("/api/comments", commentRoute);
 
 // Définition du port
 const port = process.env.PORT || 3000;
 
 // Exécution du serveur
 app.listen(port, () => {
-    console.log(
-        ansicolor.yellow.bold.italic("--------------------------------------")
-    );
-    console.log(
-        ansicolor.green.bold.italic(
-            `Serveur en cours d'exécution sur le port ${port}`
-        )
-    );
-    console.log(
-        ansicolor.yellow.bold.italic("--------------------------------------")
-    );
+    console.log("--------------------------------------");
+    console.log(`Serveur en cours d'exécution sur le port ${port}`);
+    console.log("--------------------------------------");
 });
