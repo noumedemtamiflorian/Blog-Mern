@@ -1,11 +1,11 @@
 // Import Bootstrap's CSS file and the custom CSS file for the App component
 import "../node_modules/bootstrap/dist/css/bootstrap.css";
-
+import "../node_modules/bootstrap/dist/js/bootstrap.js";
 // Import the custom CSS file for the App component
 import "./App.css";
 // This line imports the Header component from the Header.js file in the components/common directory
 import Header from "./components/common/Header";
-import AdminCategories from "./pages/admin/adminCategories";
+import AdminCategories from "./pages/admin/category/AdminCategories";
 
 // Define the App function component
 function App() {
