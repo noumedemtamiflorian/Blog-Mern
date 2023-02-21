@@ -5,6 +5,7 @@ import "../node_modules/bootstrap/dist/css/bootstrap.css";
 import "./App.css";
 // This line imports the Header component from the Header.js file in the components/common directory
 import Header from "./components/common/Header";
+import AdminCategories from "./pages/admin/adminCategories";
 
 // Define the App function component
 function App() {
@@ -12,7 +13,7 @@ function App() {
     return (
         <>
             <Header />
-            <div className="App">Init Frontend</div>
+            <AdminCategories />
         </>
     );
 }
