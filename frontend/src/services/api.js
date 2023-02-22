@@ -39,3 +39,12 @@ export const putApiCategory = async (category) => {
         return error.response;
     }
 };
+
+export const deleteApiCategory = async (id) => {
+    try {
+        const deleteCategory = await axios.delete(`${URL_CATEGORY}/${id}`);
+        return deleteCategory;
+    } catch (error) {
+        return error.response;
+    }
+};

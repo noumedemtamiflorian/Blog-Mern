@@ -5,9 +5,14 @@ import { useForm } from "react-hook-form";
 // On importe le composant FormCategory, le formulaire de creation et d'edition de categorie
 import FormCreateCategory from "../../components/category/FormCreateCategory";
 import FormEditCategory from "../../components/category/FormEditCategory";
+import ModalDeleteElement from "../../components/ModalDeleteElement";
 import ModalErrorMessage from "../../components/ModalErrorMessage";
 // On importe la fonction postCategory, la fonction asynchrone qui permet de creer une categorie via l'API
-import { postCategory, putApiCategory } from "../../services/api";
+import {
+    deleteApiCategory,
+    postCategory,
+    putApiCategory,
+} from "../../services/api";
 
 const useModal = ({ onUpdateCategories }) => {
     // isOpen représente si la boîte modale est ouverte ou fermée
@@ -76,7 +81,6 @@ const useModal = ({ onUpdateCategories }) => {
                 title: data.title,
             };
             const response = await putApiCategory(updateCategory);
-            console.log(response);
             if (response.status === 400) {
                 // Si le serveur renvoie un code 400, cela signifie que la catégorie existe
                 // déjà, donc on affiche un message d'erreur
@@ -105,8 +109,27 @@ const useModal = ({ onUpdateCategories }) => {
         }
     };
     // Fonctions pour gérer la suppression de catégories
-    const handleDelete = () => {
-        closeModal();
+    const handleDelete = async () => {
+        try {
+            const { _id } = category;
+            const response = await deleteApiCategory(_id);
+            if (response.status === 404) {
+                setMessageError("Article non trouvé");
+                setMode("error");
+                setIsOpen(true);
+                reset(); // Réinitialisation du formulaire
+            } else if (response.status === 200) {
+                onUpdateCategories((prevCategories) => [
+                    ...prevCategories.filter(
+                        (prevCategory) => prevCategory._id != category._id
+                    ),
+                ]);
+                closeModal();
+            }
+        } catch (error) {
+            setMessageError("Probleme survenue");
+            setMode("error");
+        }
     };
     // Fonctions pour gérer la création de catégories
 
@@ -140,7 +163,13 @@ const useModal = ({ onUpdateCategories }) => {
             );
         } else if (mode === "delete") {
             // Si le mode est "delete"
-            return <div>Delete</div>;
+            return (
+                <ModalDeleteElement
+                    category={category}
+                    handleDelete={handleDelete}
+                    closeModal={closeModal}
+                />
+            );
         } else if (mode === "error") {
             // Si le mode est "error", on affiche une boîte modale d'erreur
             return (
