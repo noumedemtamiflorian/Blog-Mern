@@ -47,9 +47,9 @@ const useModal = ({ onUpdateCategories }) => {
                 // donc on met à jour la liste des catégories et on ferme la boîte modale
                 onUpdateCategories((prevCategories) => [
                     ...prevCategories,
-                    data,
+                    response.data,
                 ]);
-                setCategory(data);
+                setCategory(response.data);
                 closeModal();
             }
         } catch (error) {
