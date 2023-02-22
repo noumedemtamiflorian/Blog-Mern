@@ -3,9 +3,11 @@ import { useState } from "react";
 // On importe le hook useForm de react-hook-form
 import { useForm } from "react-hook-form";
 // On importe le composant FormCategory, le formulaire de creation et d'edition de categorie
-import FormCategory from "../../components/category/FormCategory";
+import FormCreateCategory from "../../components/category/FormCreateCategory";
+import FormEditCategory from "../../components/category/FormEditCategory";
+import ModalErrorMessage from "../../components/ModalErrorMessage";
 // On importe la fonction postCategory, la fonction asynchrone qui permet de creer une categorie via l'API
-import { postCategory } from "../../services/api";
+import { postCategory, putApiCategory } from "../../services/api";
 
 const useModal = ({ onUpdateCategories }) => {
     // isOpen représente si la boîte modale est ouverte ou fermée
@@ -22,7 +24,6 @@ const useModal = ({ onUpdateCategories }) => {
         register,
         handleSubmit,
         formState: { errors },
-        watch,
     } = useForm();
 
     // Fonction de soumission du formulaire
@@ -33,10 +34,8 @@ const useModal = ({ onUpdateCategories }) => {
             if (response.status === 400) {
                 // Si le serveur renvoie un code 400, cela signifie que la catégorie existe
                 // déjà, donc on affiche un message d'erreur
-                setMessageError("Cette categorie existe deja");
                 setMode("error");
-                setIsOpen(true);
-                reset(); // Réinitialisation du formulaire
+                setMessageError("Cette categorie existe deja");
             } else if (response.status === 200) {
                 // Si le serveur renvoie un code 200, cela signifie que la catégorie
                 // a été créée avec succès,
@@ -46,7 +45,6 @@ const useModal = ({ onUpdateCategories }) => {
                     data,
                 ]);
                 setCategory(data);
-                reset();
                 closeModal();
             }
         } catch (error) {
@@ -65,12 +63,46 @@ const useModal = ({ onUpdateCategories }) => {
     // Fonction pour fermer la boîte modale
     const closeModal = () => {
         setIsOpen(false);
+        reset();
         setCategory(null);
+        setMessageError(null);
         setMode("create");
     };
     // Fonctions pour gérer la sauvegarde
-    const handleSave = (updatedCategory) => {
-        closeModal();
+    const handleSave = async (data) => {
+        try {
+            const updateCategory = {
+                ...category,
+                title: data.title,
+            };
+            const response = await putApiCategory(updateCategory);
+            console.log(response);
+            if (response.status === 400) {
+                // Si le serveur renvoie un code 400, cela signifie que la catégorie existe
+                // déjà, donc on affiche un message d'erreur
+                setMessageError("Cette categorie existe deja");
+                setMode("error");
+                setIsOpen(true);
+                reset(); // Réinitialisation du formulaire
+            } else if (response.status === 200) {
+                onUpdateCategories((prevCategories) => {
+                    const updateCategories = prevCategories.map(
+                        (prevCategory) =>
+                            prevCategory._id === category._id
+                                ? { ...prevCategory, title: data.title }
+                                : prevCategory
+                    );
+                    return [...updateCategories];
+                });
+                setCategory(data);
+                closeModal();
+            }
+        } catch (error) {
+            // Si une erreur survient lors de l'appel à la
+            //  fonction postCategory, on affiche un message d'erreur générique
+            setMessageError("Probleme survenue");
+            setMode("error");
+        }
     };
     // Fonctions pour gérer la suppression de catégories
     const handleDelete = () => {
@@ -87,9 +119,8 @@ const useModal = ({ onUpdateCategories }) => {
             // Si le mode est "create", on retourne le composant FormCategory
             // avec les props nécessaires
             return (
-                <FormCategory
-                    watch={watch}
-                    setIsOpen={setIsOpen}
+                <FormCreateCategory
+                    closeModal={closeModal}
                     onSubmit={handleSubmit(onSubmit)}
                     register={register}
                     handleSubmit={handleSubmit}
@@ -98,41 +129,25 @@ const useModal = ({ onUpdateCategories }) => {
             );
         } else if (mode === "edit") {
             // Si le mode est "edit"
-            return <div>Edit</div>;
+            return (
+                <FormEditCategory
+                    onSubmit={handleSubmit(handleSave)}
+                    closeModal={closeModal}
+                    category={category}
+                    errors={errors}
+                    register={register}
+                />
+            );
         } else if (mode === "delete") {
             // Si le mode est "delete"
             return <div>Delete</div>;
         } else if (mode === "error") {
             // Si le mode est "error", on affiche une boîte modale d'erreur
             return (
-                <div className="modal fade show" style={{ display: "block" }}>
-                    <div className="modal-dialog">
-                        <div className="modal-content">
-                            <div className="modal-header">
-                                <h5 className="modal-title">Boite modal</h5>
-                                <button
-                                    type="button"
-                                    className="close"
-                                    onClick={() => setIsOpen(false)}
-                                >
-                                    <span>&times;</span>
-                                </button>
-                            </div>
-                            <div className="modal-body text-danger">
-                                {messageError}
-                            </div>
-                            <div className="modal-footer">
-                                <button
-                                    type="button"
-                                    className="btn btn-secondary"
-                                    onClick={() => setIsOpen(false)}
-                                >
-                                    Fermer
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                <ModalErrorMessage
+                    closeModal={closeModal}
+                    messageError={messageError}
+                />
             );
         } else {
             // Si le mode n'est pas défini, on ne retourne rien

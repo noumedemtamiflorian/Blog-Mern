@@ -26,11 +26,11 @@ exports.create = async (req, res) => {
         await newCategory.save();
 
         // Renvoie un message indiquant que la catégorie a été ajoutée avec succès
-        return res.json({ message: "Catégorie ajoutée avec succès" });
+        return res.json(newCategory);
     } catch (err) {
         console.log(err);
         // Si une erreur se produit, renvoie un code d'erreur et le message d'erreur
-        return res.status(400).json({ message: error.message });
+        return res.status(400).json({ message: err.message });
     }
 };
 
@@ -68,18 +68,24 @@ exports.findOne = async (req, res) => {
 // Mettre a jour la catégorie correspondant à l'ID
 exports.update = async (req, res) => {
     try {
-        const category = await Category.findById(req.params.id);
+        const title = req.body.title;
+        // Vérifie si la catégorie existe déjà
+        const category = await Category.findOne({ title });
+        if (category) {
+            // Si oui, renvoie un code d'erreur et un message
+            return res.status(400).json({ message: "Catégorie existe déjà." });
+        }
+
+        const updatedCategory = await Category.findById(req.params.id);
 
         // Mettre à jour le titre de la catégorie
-        category.title = req.body.title;
+        updatedCategory.title = req.body.title;
 
         // Enregistrer les modifications
-        await category.save();
+        await updatedCategory.save();
 
         // Retourner un message de succès
-        return res.json({
-            message: "Catégorie mise à jour avec succès",
-        });
+        return res.json(updatedCategory);
     } catch (error) {
         // Retourner un message d'erreur
         return res.status(400).json({ message: error.message });

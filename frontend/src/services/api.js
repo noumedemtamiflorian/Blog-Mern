@@ -27,3 +27,15 @@ export const postCategory = async (category) => {
         return error.response;
     }
 };
+
+export const putApiCategory = async (category) => {
+    const { title, _id } = category;
+    try {
+        const response = await axios.put(`${URL_CATEGORY}/${_id}`, {
+            title,
+        });
+        return response;
+    } catch (error) {
+        return error.response;
+    }
+};

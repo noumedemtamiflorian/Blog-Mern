@@ -2,20 +2,20 @@
 import React from "react";
 // Composant FormCategory, prend en paramètres category,
 // register, errors, setIsOpen et onSubmit
-const FormCategory = ({ category, register, errors, setIsOpen, onSubmit }) => {
-    // Condition ternaire pour déterminer le message du bouton selon le mode
-    const messageButton = !category ? "Enregistrer" : "Modifie";
+const FormCategory = ({ register, errors, closeModal, onSubmit }) => {
     // Rendu du composant
     return (
         <div className="modal fade show" style={{ display: "block" }}>
             <div className="modal-dialog">
                 <div className="modal-content">
                     <div className="modal-header">
-                        <h5 className="modal-title">Boite modal</h5>
+                        <h5 className="modal-title">
+                            Creation d'une categorie
+                        </h5>
                         <button
                             type="button"
                             className="close"
-                            onClick={() => setIsOpen(false)}
+                            onClick={closeModal}
                         >
                             <span>&times;</span>
                         </button>
@@ -51,7 +51,7 @@ const FormCategory = ({ category, register, errors, setIsOpen, onSubmit }) => {
                                 type="submit"
                                 className="btn btn-primary mt-3"
                             >
-                                {messageButton}
+                                Enregistrer
                             </button>
                         </form>{" "}
                     </div>
@@ -60,7 +60,7 @@ const FormCategory = ({ category, register, errors, setIsOpen, onSubmit }) => {
                         <button
                             type="button"
                             className="btn btn-secondary"
-                            onClick={() => setIsOpen(false)}
+                            onClick={closeModal}
                         >
                             Fermer
                         </button>
