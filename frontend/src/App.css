@@ -41,3 +41,7 @@
 .btn-link {
   text-decoration: none;
 }
+.animate{
+  background-color: red;
+  color: blue;
+}

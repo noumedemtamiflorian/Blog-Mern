@@ -1,12 +1,16 @@
 import React, { useEffect, useState } from "react";
-import { getCategories } from "../../../services/api";
+import { getArticles } from "../../../services/api";
+import useModalArticles from "../../../utils/hooks/useModalArticles";
 
 const AdminArticles = () => {
     const [articles, setArticles] = useState([]);
 
+    const { isOpen, openModal, article, Modal } = useModalArticles({
+        onUpdateArticles: setArticles,
+    });
+
     useEffect(() => {
-        getCategories().then((res) => {
-            console.log(res);
+        getArticles().then((res) => {
             setArticles(res.data);
         });
     }, []);
@@ -16,7 +20,12 @@ const AdminArticles = () => {
             <div className="d-flex justify-content-between align-items-center mb-4">
                 <h2>Articles</h2>
                 <div className="form-inline">
-                    <button className="btn btn-primary">Create Article</button>
+                    <button
+                        onClick={() => openModal(article, "create")}
+                        className="btn btn-primary"
+                    >
+                        Create Article
+                    </button>
                 </div>
             </div>
 
@@ -49,6 +58,7 @@ const AdminArticles = () => {
                     ))}
                 </tbody>
             </table>
+            {isOpen ? <Modal /> : null}
         </div>
     );
 };
