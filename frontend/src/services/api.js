@@ -27,3 +27,11 @@ export const postArticle = async (data) => {
         return error;
     }
 };
+export const putArticle = async (data) => {
+    try {
+        const response = await axios.put(`${URL_ARTICLE}/${data._id}`, data);
+        return response;
+    } catch (error) {
+        return error;
+    }
+};

@@ -46,7 +46,12 @@ const AdminArticles = () => {
                             <td>{article.description}</td>
                             <td>
                                 <div className="btn-group">
-                                    <button className="btn btn-primary">
+                                    <button
+                                        onClick={() =>
+                                            openModal(article, "edit")
+                                        }
+                                        className="btn btn-primary"
+                                    >
                                         Edit
                                     </button>
                                     <button className="btn btn-danger">
