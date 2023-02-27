@@ -35,3 +35,12 @@ export const putArticle = async (data) => {
         return error;
     }
 };
+
+export const deleteArticle = async (id) => {
+    try {
+        const deleteArticle = await axios.delete(`${URL_ARTICLE}/${id}`);
+        return deleteArticle;
+    } catch (error) {
+        return error.response;
+    }
+};

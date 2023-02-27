@@ -54,7 +54,12 @@ const AdminArticles = () => {
                                     >
                                         Edit
                                     </button>
-                                    <button className="btn btn-danger">
+                                    <button
+                                        onClick={() =>
+                                            openModal(article, "delete")
+                                        }
+                                        className="btn btn-danger"
+                                    >
                                         Delete
                                     </button>
                                 </div>

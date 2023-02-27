@@ -3,8 +3,9 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import FormCreateArticle from "../../components/article/FormCreateArticle";
 import FormEditArticle from "../../components/article/FormEditArticle";
+import ModalDeleteElement from "../../components/ModalDeleteElement";
 import ModalErrorMessage from "../../components/ModalErrorMessage.js";
-import { postArticle, putArticle } from "../../services/api";
+import { deleteArticle, postArticle, putArticle } from "../../services/api";
 import { URL_CLOUDINARY_UPLOAD } from "../constants/urls";
 
 const useModalArticles = ({ onUpdateArticles }) => {
@@ -58,7 +59,6 @@ const useModalArticles = ({ onUpdateArticles }) => {
             setMode("error");
         }
     };
-
     const handleEdit = async (data) => {
         try {
             console.log(data);
@@ -91,6 +91,29 @@ const useModalArticles = ({ onUpdateArticles }) => {
         }
     };
 
+    const handleDelete = async () => {
+        try {
+            const { _id } = article;
+            const response = await deleteArticle(_id);
+            if (response.status === 404) {
+                setMessageError("Article non trouvé");
+                setMode("error");
+                setIsOpen(true);
+                reset(); // Réinitialisation du formulaire
+            } else if (response.status === 200) {
+                onUpdateArticles((prevArticle) => [
+                    ...prevArticle.filter(
+                        (prevArticle) => prevArticle._id != article._id
+                    ),
+                ]);
+                closeModal();
+            }
+        } catch (error) {
+            setMessageError("Probleme survenue");
+            setMode("error");
+        }
+    };
+
     const Modal = () => {
         if (mode === "create") {
             return (
@@ -112,7 +135,13 @@ const useModalArticles = ({ onUpdateArticles }) => {
                 />
             );
         } else if (mode === "delete") {
-            return null;
+            return (
+                <ModalDeleteElement
+                    article={article}
+                    closeModal={closeModal}
+                    handleDelete={handleDelete}
+                />
+            );
         } else if (mode === "error") {
             return (
                 <ModalErrorMessage
