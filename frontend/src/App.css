@@ -37,7 +37,10 @@
   }
 }
 
-
-.btn-link {
+.btn-link,a {
   text-decoration: none;
+}
+.card-img {
+  object-fit: cover;
+  height: 200px;
 }
