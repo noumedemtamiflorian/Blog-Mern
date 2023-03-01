@@ -13,7 +13,6 @@ function App() {
     return (
         <>
             <Header />
-            <div className="App">Init Frontend</div>
             <Footer />
         </>
     );
