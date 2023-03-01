@@ -6,6 +6,7 @@ import "./App.css";
 import Footer from "./components/common/Footer";
 // This line imports the Header component from the Header.js file in the components/common directory
 import Header from "./components/common/Header";
+import ArticlesByCategorie from "./pages/articlesByCategorie";
 
 // Define the App function component
 function App() {
@@ -13,7 +14,7 @@ function App() {
     return (
         <>
             <Header />
-            <div className="App">Init Frontend</div>
+            <ArticlesByCategorie />
             <Footer />
         </>
     );
