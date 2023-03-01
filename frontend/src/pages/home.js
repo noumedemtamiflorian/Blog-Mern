@@ -1,10 +1,16 @@
 import React, { useEffect, useState } from "react";
 import Post from "../components/Post";
 import { getArticles, getCategories } from "../services/api";
+import UsePagination from "../utils/hook/usePagination";
 
 const Home = () => {
     const [categories, setCategories] = useState([]);
     const [articles, setArticles] = useState([]);
+
+    const { Pagination, currentArticles } = UsePagination({
+        articles: articles,
+        perPage: 3,
+    });
 
     useEffect(() => {
         async function fetchData() {
@@ -22,16 +28,18 @@ const Home = () => {
         <div>
             <main className="row">
                 <article className="col-sm-7 col-md-8 col-lg-9 col-xl-10 justify-content-center text-center row">
-                    {articles.map(({ title, image, description }, index) => {
-                        return (
-                            <Post
-                                title={title}
-                                image={image}
-                                description={description}
-                                key={index}
-                            />
-                        );
-                    })}
+                    {currentArticles?.map(
+                        ({ title, image, description }, index) => {
+                            return (
+                                <Post
+                                    title={title}
+                                    image={image}
+                                    description={description}
+                                    key={index}
+                                />
+                            );
+                        }
+                    )}
                 </article>
                 <div
                     id="categories"
@@ -41,16 +49,17 @@ const Home = () => {
                     <ul className="list-group mr-4">
                         {categories.map(({ title, _id }) => {
                             return (
-                                <a key={_id} href="#">
+                                <button key={_id} href="#">
                                     <li className="list-group-item list-group-item-action">
                                         {title}
                                     </li>
-                                </a>
+                                </button>
                             );
                         })}
                     </ul>
                 </div>
             </main>
+            <Pagination />
         </div>
     );
 };
