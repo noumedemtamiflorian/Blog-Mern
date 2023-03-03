@@ -1,5 +1,5 @@
 import axios from "axios";
-import { URL_ARTICLE } from "../utils/constants/urls";
+import { URL_ARTICLE, URL_COMMENT } from "../utils/constants/urls";
 
 export const getArticle = async (_id) => {
     try {
@@ -7,5 +7,14 @@ export const getArticle = async (_id) => {
         return articles;
     } catch (error) {
         return error.response;
+    }
+};
+
+export const postComment = async (data) => {
+    try {
+        const response = await axios.post(URL_COMMENT, data);
+        return response;
+    } catch (error) {
+        return error;
     }
 };

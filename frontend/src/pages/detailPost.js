@@ -1,8 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { getArticle } from "../services/api";
+import useModalComment from "../utils/hooks/useModalComment";
 
 const DetailPost = () => {
     const [article, setArticle] = useState(null);
+
+    const { isOpen, Modal, openModal, comment } = useModalComment({
+        setArticle: setArticle,
+    });
 
     useEffect(() => {
         getArticle("63f9032918cdaba810754f84").then((res) => {
@@ -29,7 +34,20 @@ const DetailPost = () => {
                 <p>Aucun commentaire pour cet article.</p>
             ) : (
                 <>
-                    <h2>Commentaires</h2>
+                    <div className="d-flex justify-content-between align-items-center mb-3">
+                        <h2>Commentaires</h2>
+                        <button
+                            onClick={() =>
+                                openModal(
+                                    { article: article._id, ...comment },
+                                    "create"
+                                )
+                            }
+                            className="btn btn-sm btn-primary"
+                        >
+                            Ajouter un commentaire
+                        </button>
+                    </div>
                     {article?.comments.map((comment, index) => (
                         <div key={index} className="card mb-3">
                             <div className="card-body">
@@ -49,6 +67,7 @@ const DetailPost = () => {
                     ))}
                 </>
             )}
+            {isOpen ? <Modal /> : null}
         </div>
     );
 };
