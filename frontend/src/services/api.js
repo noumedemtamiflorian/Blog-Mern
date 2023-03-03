@@ -18,3 +18,12 @@ export const postComment = async (data) => {
         return error;
     }
 };
+
+export const editComemnt = async (id, data) => {
+    try {
+        const response = await axios.put(URL_COMMENT + "/" + id, data);
+        return response;
+    } catch (error) {
+        return error;
+    }
+};

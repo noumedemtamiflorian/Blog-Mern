@@ -54,7 +54,18 @@ const DetailPost = () => {
                                 <p className="card-text">{comment.content}</p>
                                 <div className="d-flex justify-content-between align-items-center">
                                     <div className="btn-group">
-                                        <button className="btn btn-sm btn-primary">
+                                        <button
+                                            onClick={() =>
+                                                openModal(
+                                                    {
+                                                        article: article._id,
+                                                        ...comment,
+                                                    },
+                                                    "edit"
+                                                )
+                                            }
+                                            className="btn btn-sm btn-primary"
+                                        >
                                             Editer
                                         </button>
                                         <button className="btn btn-sm btn-danger">
