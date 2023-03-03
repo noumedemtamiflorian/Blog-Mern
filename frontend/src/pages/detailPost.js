@@ -30,24 +30,24 @@ const DetailPost = () => {
                 <p className="mb-4">{article?.description}</p>
                 <p className="mb-4">{article?.content}</p>
             </div>
+            <div className="d-flex justify-content-between align-items-center mb-3">
+                <h2>Commentaires</h2>
+                <button
+                    onClick={() =>
+                        openModal(
+                            { article: article._id, ...comment },
+                            "create"
+                        )
+                    }
+                    className="btn btn-sm btn-primary"
+                >
+                    Ajouter un commentaire
+                </button>
+            </div>
             {article?.comments?.length === 0 ? (
                 <p>Aucun commentaire pour cet article.</p>
             ) : (
                 <>
-                    <div className="d-flex justify-content-between align-items-center mb-3">
-                        <h2>Commentaires</h2>
-                        <button
-                            onClick={() =>
-                                openModal(
-                                    { article: article._id, ...comment },
-                                    "create"
-                                )
-                            }
-                            className="btn btn-sm btn-primary"
-                        >
-                            Ajouter un commentaire
-                        </button>
-                    </div>
                     {article?.comments.map((comment, index) => (
                         <div key={index} className="card mb-3">
                             <div className="card-body">
@@ -68,7 +68,12 @@ const DetailPost = () => {
                                         >
                                             Editer
                                         </button>
-                                        <button className="btn btn-sm btn-danger">
+                                        <button
+                                            onClick={() =>
+                                                openModal(comment, "delete")
+                                            }
+                                            className="btn btn-sm btn-danger"
+                                        >
                                             Supprimer
                                         </button>
                                     </div>

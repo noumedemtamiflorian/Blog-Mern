@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import FormCreateComment from "../../components/FormCreateComment";
+import FormDeleteComment from "../../components/FormDeleteComment";
 import FormEditComment from "../../components/FormEditComment";
-import { editComemnt, postComment } from "../../services/api";
+import { deleteComment, editComemnt, postComment } from "../../services/api";
 
 const useModalComment = ({ setArticle }) => {
     const [isOpen, setIsOpen] = useState(false);
@@ -57,6 +58,23 @@ const useModalComment = ({ setArticle }) => {
             console.log(error);
         }
     };
+    const handleDelete = async () => {
+        try {
+            const response = await deleteComment(comment._id);
+            setArticle((prevState) => {
+                const updatedComments = prevState.comments.filter(
+                    (comment) => comment._id !== response.data._id
+                );
+                return {
+                    ...prevState,
+                    comments: updatedComments,
+                };
+            });
+            closeModal();
+        } catch (error) {
+            return error;
+        }
+    };
     const Modal = () => {
         if (mode === "create") {
             return (
@@ -74,7 +92,13 @@ const useModalComment = ({ setArticle }) => {
                 />
             );
         } else if (mode === "delete") {
-            return <div>Delete</div>;
+            return (
+                <FormDeleteComment
+                    handleDelete={handleDelete}
+                    comment={comment}
+                    closeModal={closeModal}
+                />
+            );
         } else if (mode === "error") {
             return null;
         } else {

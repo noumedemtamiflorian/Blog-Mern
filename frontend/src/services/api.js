@@ -27,3 +27,12 @@ export const editComemnt = async (id, data) => {
         return error;
     }
 };
+
+export const deleteComment = async (_id) => {
+    try {
+        const response = await axios.delete(URL_COMMENT + "/" + _id);
+        return response;
+    } catch (error) {
+        return error;
+    }
+};
