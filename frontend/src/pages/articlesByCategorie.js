@@ -1,10 +1,17 @@
 import React, { useEffect, useState } from "react";
 import Post from "../components/Post";
 import { getCategories, getCategory } from "../services/api";
+import usePagination from "../utils/hooks/usePagination";
 
 const ArticlesByCategorie = () => {
     const [categories, setCategories] = useState([]);
     const [category, setCategory] = useState({});
+    const [articles, setArticles] = useState([]);
+
+    const { Pagination, currentArticles } = usePagination({
+        articles: articles,
+        perPage: 1,
+    });
 
     useEffect(() => {
         async function fetchData() {
@@ -13,6 +20,7 @@ const ArticlesByCategorie = () => {
                 getCategories(),
             ]);
             setCategory(category.data);
+            setArticles(category.data.articles);
             setCategories(categories.data);
         }
         fetchData();
@@ -22,7 +30,7 @@ const ArticlesByCategorie = () => {
         <div>
             <main className="row">
                 <article className="col-sm-7 col-md-8 col-lg-9 col-xl-10 justify-content-center text-center row">
-                    {category?.articles?.map(
+                    {currentArticles?.map(
                         ({ title, image, description }, index) => {
                             return (
                                 <Post
@@ -59,6 +67,7 @@ const ArticlesByCategorie = () => {
                     </ul>
                 </div>
             </main>
+            <Pagination />
         </div>
     );
 };
