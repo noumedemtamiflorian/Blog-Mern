@@ -1,7 +1,5 @@
 // On importe le hook useState de React
 import { useState } from "react";
-// On importe le hook useForm de react-hook-form
-import { useForm } from "react-hook-form";
 // On importe le composant FormCategory, le formulaire de creation et d'edition de categorie
 import FormCreateCategory from "../../components/category/FormCreateCategory";
 import FormEditCategory from "../../components/category/FormEditCategory";
@@ -23,16 +21,9 @@ const useModal = ({ onUpdateCategories }) => {
     const [mode, setMode] = useState("create");
     // messageError représente le message d'erreur affiché dans la boîte modale en cas d'erreur
     const [messageError, setMessageError] = useState(null);
-    // Initialisation du formulaire React Hook Form
-    const {
-        reset,
-        register,
-        handleSubmit,
-        formState: { errors },
-    } = useForm();
 
     // Fonction de soumission du formulaire
-    const onSubmit = async (data) => {
+    const handleSave = async (data) => {
         try {
             // Appelle la fonction postCategory du service api.js pour envoyer les données au serveur
             const response = await postCategory(data);
@@ -68,13 +59,12 @@ const useModal = ({ onUpdateCategories }) => {
     // Fonction pour fermer la boîte modale
     const closeModal = () => {
         setIsOpen(false);
-        reset();
         setCategory(null);
         setMessageError(null);
         setMode("create");
     };
     // Fonctions pour gérer la sauvegarde
-    const handleSave = async (data) => {
+    const handleEdit = async (data) => {
         try {
             const updateCategory = {
                 ...category,
@@ -87,7 +77,6 @@ const useModal = ({ onUpdateCategories }) => {
                 setMessageError("Cette categorie existe deja");
                 setMode("error");
                 setIsOpen(true);
-                reset(); // Réinitialisation du formulaire
             } else if (response.status === 200) {
                 onUpdateCategories((prevCategories) => {
                     const updateCategories = prevCategories.map(
@@ -117,7 +106,6 @@ const useModal = ({ onUpdateCategories }) => {
                 setMessageError("Article non trouvé");
                 setMode("error");
                 setIsOpen(true);
-                reset(); // Réinitialisation du formulaire
             } else if (response.status === 200) {
                 onUpdateCategories((prevCategories) => [
                     ...prevCategories.filter(
@@ -133,9 +121,6 @@ const useModal = ({ onUpdateCategories }) => {
     };
     // Fonctions pour gérer la création de catégories
 
-    const handleCreate = (newCategory) => {
-        closeModal();
-    };
     // Cette fonction retourne un composant Modal en fonction du mode actuel
     const Modal = () => {
         if (mode === "create") {
@@ -144,21 +129,16 @@ const useModal = ({ onUpdateCategories }) => {
             return (
                 <FormCreateCategory
                     closeModal={closeModal}
-                    onSubmit={handleSubmit(onSubmit)}
-                    register={register}
-                    handleSubmit={handleSubmit}
-                    errors={errors}
+                    onSubmit={handleSave}
                 />
             );
         } else if (mode === "edit") {
             // Si le mode est "edit"
             return (
                 <FormEditCategory
-                    onSubmit={handleSubmit(handleSave)}
+                    onSubmit={handleEdit}
                     closeModal={closeModal}
                     category={category}
-                    errors={errors}
-                    register={register}
                 />
             );
         } else if (mode === "delete") {
@@ -198,12 +178,7 @@ const useModal = ({ onUpdateCategories }) => {
     return {
         isOpen,
         category,
-        mode,
         openModal,
-        closeModal,
-        handleSave,
-        handleDelete,
-        handleCreate,
         Modal,
     };
 };

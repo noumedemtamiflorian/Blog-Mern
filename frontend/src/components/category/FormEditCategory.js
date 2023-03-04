@@ -1,12 +1,49 @@
-import React from "react";
+import React, { useState } from "react";
 
-const FormEditCategory = ({
-    onSubmit,
-    closeModal,
-    category,
-    register,
-    errors,
-}) => {
+const FormEditCategory = ({ onSubmit, closeModal, category }) => {
+    const [formValues, setFormValues] = useState({
+        title: category.title,
+    });
+    const [formErrors, setFormErrors] = useState({
+        title: "",
+    });
+    const validateField = (name, value) => {
+        let errorMessage = "";
+
+        switch (name) {
+            case "title":
+                if (value.length < 3) {
+                    errorMessage =
+                        "Le titre doit contenir au moins 3 caractères.";
+                }
+                break;
+            default:
+                break;
+        }
+
+        setFormErrors({
+            ...formErrors,
+            [name]: errorMessage,
+        });
+    };
+
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setFormValues({
+            ...formValues,
+            [name]: value,
+        });
+        validateField(name, value);
+    };
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        onSubmit(formValues);
+    };
+    const isFormValid = () => {
+        return Object.keys(formErrors).every((key) => formErrors[key] === "");
+    };
+
     return (
         <div className="modal fade show" style={{ display: "block" }}>
             <div className="modal-dialog">
@@ -25,28 +62,26 @@ const FormEditCategory = ({
                     </div>
                     <div className="modal-body">
                         {/* Formulaire */}
-                        <form onSubmit={onSubmit}>
+                        <form onSubmit={handleSubmit}>
                             {/* Champ titre */}
                             <div className="form-group">
                                 <label htmlFor="title">
                                     Titre de la catégorie
                                 </label>
                                 <input
+                                    required
                                     defaultValue={category.title}
                                     type="text"
                                     name="title"
                                     id="title"
                                     className={`form-control ${
-                                        errors?.title ? "is-invalid" : ""
+                                        formErrors.title ? "is-invalid" : ""
                                     }`}
-                                    {...register("title", {
-                                        required: true,
-                                    })}
+                                    onChange={handleChange}
                                 />
-                                {/* Affichage de l'erreur si le titre est manquant */}
-                                {errors?.title && (
+                                {formErrors.title && (
                                     <div className="invalid-feedback">
-                                        Le titre est obligatoire
+                                        {formErrors.title}
                                     </div>
                                 )}
                             </div>
@@ -54,6 +89,7 @@ const FormEditCategory = ({
                             <button
                                 type="submit"
                                 className="btn btn-primary mt-3"
+                                disabled={!isFormValid()}
                             >
                                 Modifier
                             </button>
