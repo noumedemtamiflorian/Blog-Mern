@@ -37,11 +37,14 @@
   }
 }
 
-
-.btn-link {
-  text-decoration: none;
-}
 .animate{
   background-color: red;
   color: blue;
+}
+.btn-link,a {
+  text-decoration: none;
+}
+.card-img {
+  object-fit: cover;
+  height: 200px;
 }

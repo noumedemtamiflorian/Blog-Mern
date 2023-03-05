@@ -1,6 +1,5 @@
 import axios from "axios";
-import { URL_CATEGORY } from "../utils/constants/urls";
-import { URL_ARTICLE } from "../utils/constants/urls";
+import { URL_CATEGORY, URL_ARTICLE } from "../utils/constants/urls";
 
 export const getCategories = async () => {
     try {
