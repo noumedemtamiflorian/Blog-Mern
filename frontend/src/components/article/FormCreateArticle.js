@@ -1,47 +1,89 @@
-// Importer les modules React, useEffect et useState depuis la bibliothèque "react"
 import React, { useEffect, useState } from "react";
-// Importer la fonction getCategories depuis le module d'API pour
-// obtenir une liste de catégories à partir de l'API
+
 import { getCategories } from "../../services/api";
 
-// Définir un composant de formulaire React pour créer un nouvel article
-const FormCreateArticle = ({ register, errors, closeModal, onSubmit }) => {
-    // Définir un état pour l'aperçu de l'image qui est initialement nul
-    const [imagePreview, setImagePreview] = useState(null);
-    // Définir un état pour les catégories qui est initialement
-    // un tableau vide avec un objet
-    const [categories, setCategories] = useState([{}]);
-    // Définir une fonction pour gérer la prévisualisation de l'image
-    const handleImagePreview = (e) => {
-        // Si un fichier est sélectionné dans l'input file
-        if (e.target.files[0]) {
-            // Créer une URL temporaire pour l'aperçu de l'image à partir
-            // du fichier sélectionné
-            setImagePreview(URL.createObjectURL(e.target.files[0]));
-        } else {
-            // Sinon, réinitialiser l'aperçu de l'image à null
-            setImagePreview(null);
-        }
+const FormCreateArticle = ({ closeModal, onSubmit }) => {
+    const [categories, setCategories] = useState([]);
+    const [formValues, setFormValues] = useState({
+        title: "",
+        description: "",
+        image: null,
+        category: "",
+        content: "",
+    });
+
+    const [formErrors, setFormErrors] = useState({
+        title: "",
+        description: "",
+        image: "",
+        category: "",
+        content: "",
+    });
+
+    const handleInputChange = (e) => {
+        const { name, value, files } = e.target;
+
+        setFormValues({
+            ...formValues,
+            [name]: files ? files[0] : value,
+        });
+        validateField(name, files ? files[0] : value);
     };
-    // Utiliser le hook useEffect pour récupérer les catégories de l'API
-    // au moment du montage du composant
+    const validateField = (name, value) => {
+        let errorMessage = "";
+
+        switch (name) {
+            case "title":
+                if (value.trim().length < 5) {
+                    errorMessage =
+                        "Le titre doit contenir au moins 5 caractères.";
+                }
+                break;
+            case "description":
+                if (value.trim().length < 15) {
+                    errorMessage =
+                        "Le titre doit contenir au moins 15 caractères.";
+                }
+                break;
+            case "image":
+                if (!value) {
+                    errorMessage = "Une image est requise.";
+                }
+                break;
+            case "category":
+                if (!value) {
+                    errorMessage = "Veuillez sélectionner une catégorie.";
+                }
+                break;
+            case "content":
+                if (value.length < 50) {
+                    errorMessage =
+                        "Le contenu doit contenir au moins 50 caractères.";
+                }
+                break;
+            default:
+                break;
+        }
+
+        setFormErrors({
+            ...formErrors,
+            [name]: errorMessage,
+        });
+    };
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        onSubmit(formValues);
+    };
+
+    const isFormValid = () => {
+        return Object.keys(formErrors).every((key) => formErrors[key] === "");
+    };
     useEffect(() => {
-        // Appeler la fonction asynchrone getCategories() qui
-        // renvoie une promesse avec les données des catégories
         getCategories()
-            // Si la promesse est résolue avec succès
-            .then((res) => {
-                // Mettre à jour l'état des catégories avec les données récupérées
-                setCategories(res.data);
-            })
-            // Si la promesse est rejetée avec une erreur
-            .then((error) => {
-                // Ne rien faire pour le moment (à remplacer par une gestion
-                // d'erreur appropriée)
-            });
-        // Passer un tableau vide comme dépendance pour que useEffect s'exécute
-        // uniquement au montage du composant
+            .then((res) => setCategories(res.data))
+            .catch((er) => er);
     }, []);
+
     return (
         <div className="modal fade show d-block">
             <div className="modal-dialog">
@@ -61,7 +103,7 @@ const FormCreateArticle = ({ register, errors, closeModal, onSubmit }) => {
                         {/* Formulaire de création d'article */}
                         <form
                             className="mx-auto my-5 bg-dark text-light p-5 col-12 rounded-lg"
-                            onSubmit={onSubmit}
+                            onSubmit={handleSubmit}
                         >
                             {/* Champ titre */}
                             <div className="form-group mb-4">
@@ -69,16 +111,18 @@ const FormCreateArticle = ({ register, errors, closeModal, onSubmit }) => {
                                 <input
                                     type="text"
                                     className={`form-control ${
-                                        errors?.title ? "is-invalid" : ""
+                                        formErrors.title ? "is-invalid" : ""
                                     }`}
                                     id="title"
                                     name="title"
                                     placeholder="Titre"
-                                    {...register("title", { required: true })}
+                                    required
+                                    value={formValues.title}
+                                    onChange={handleInputChange}
                                 />
-                                {errors?.title && (
+                                {formErrors.title && (
                                     <div className="invalid-feedback">
-                                        Le titre est requis
+                                        {formErrors.title}
                                     </div>
                                 )}
                             </div>
@@ -88,18 +132,20 @@ const FormCreateArticle = ({ register, errors, closeModal, onSubmit }) => {
                                 <input
                                     type="text"
                                     className={`form-control ${
-                                        errors?.description ? "is-invalid" : ""
+                                        formErrors.description
+                                            ? "is-invalid"
+                                            : ""
                                     }`}
                                     id="description"
                                     name="description"
                                     placeholder="Description"
-                                    {...register("description", {
-                                        required: true,
-                                    })}
+                                    required
+                                    value={formValues.description}
+                                    onChange={handleInputChange}
                                 />
-                                {errors?.description && (
+                                {formErrors.description && (
                                     <div className="invalid-feedback">
-                                        La description est requise
+                                        {formErrors.description}
                                     </div>
                                 )}
                             </div>
@@ -109,25 +155,27 @@ const FormCreateArticle = ({ register, errors, closeModal, onSubmit }) => {
                                 <input
                                     type="file"
                                     className={`form-control-file ${
-                                        errors?.image ? "is-invalid" : ""
+                                        formErrors.image ? "is-invalid" : ""
                                     }`}
                                     accept="image/*"
                                     id="image"
                                     name="image"
-                                    {...register("image", { required: true })}
-                                    onChange={handleImagePreview}
+                                    required
+                                    onChange={handleInputChange}
                                 />
                                 {/* Affichage de l'aperçu de l'image */}
-                                {imagePreview && (
+                                {formValues.image && (
                                     <img
-                                        src={imagePreview}
+                                        src={URL.createObjectURL(
+                                            formValues.image
+                                        )}
                                         alt=" Preview"
                                         className="mt-3 img-fluid"
                                     />
                                 )}
-                                {errors?.image && (
+                                {formErrors.image && (
                                     <div className="invalid-feedback">
-                                        L'image est requise
+                                        {formErrors.image}
                                     </div>
                                 )}
                             </div>
@@ -136,13 +184,13 @@ const FormCreateArticle = ({ register, errors, closeModal, onSubmit }) => {
                                 <label htmlFor="category">Catégorie</label>
                                 <select
                                     className={`form-control ${
-                                        errors?.category ? "is-invalid" : ""
+                                        formErrors.category ? "is-invalid" : ""
                                     }`}
                                     id="category"
                                     name="category"
-                                    {...register("category", {
-                                        required: true,
-                                    })}
+                                    value={formValues.category}
+                                    onChange={handleInputChange}
+                                    required
                                 >
                                     {/* Option pour sélectionner une catégorie */}
                                     <option value="">
@@ -159,9 +207,9 @@ const FormCreateArticle = ({ register, errors, closeModal, onSubmit }) => {
                                         );
                                     })}
                                 </select>
-                                {errors?.category && (
+                                {formErrors.category && (
                                     <div className="invalid-feedback">
-                                        La catégorie est requise
+                                        {formErrors.category}
                                     </div>
                                 )}
                             </div>
@@ -170,16 +218,18 @@ const FormCreateArticle = ({ register, errors, closeModal, onSubmit }) => {
                                 <label htmlFor="content">Contenu</label>
                                 <textarea
                                     className={`form-control ${
-                                        errors?.content ? "is-invalid" : ""
+                                        formErrors.content ? "is-invalid" : ""
                                     }`}
                                     id="content"
                                     name="content"
                                     rows="5"
-                                    {...register("content", { required: true })}
-                                ></textarea>
-                                {errors?.content && (
+                                    required
+                                    value={formValues.content}
+                                    onChange={handleInputChange}
+                                ></textarea>{" "}
+                                {formErrors.content && (
                                     <div className="invalid-feedback">
-                                        Le contenu est requis
+                                        {formErrors.content}
                                     </div>
                                 )}
                             </div>
@@ -189,8 +239,9 @@ const FormCreateArticle = ({ register, errors, closeModal, onSubmit }) => {
                                     <button
                                         type="submit"
                                         className="btn btn-primary"
+                                        disabled={!isFormValid()}
                                     >
-                                        Envoyer
+                                        Ajouter
                                     </button>
                                 </div>
                             </div>

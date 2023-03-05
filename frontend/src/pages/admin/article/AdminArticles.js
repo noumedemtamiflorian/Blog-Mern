@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from "react";
 // Importation de la fonction getArticles de l'API
 import { getArticles } from "../../../services/api";
+import { selectFirstFiveWords } from "../../../utils/fonctions/selectFirstFiveWords";
 // Importation du hook useModalArticles
 import useModalArticles from "../../../utils/hooks/useModalArticles";
 
@@ -52,8 +53,10 @@ const AdminArticles = () => {
                     {articles.map((article, index) => (
                         <tr key={index}>
                             <td>{index + 1}</td>
-                            <td>{article.title}</td>
-                            <td>{article.description}</td>
+                            <td>{selectFirstFiveWords(article?.title)}</td>
+                            <td>
+                                {selectFirstFiveWords(article?.description)}
+                            </td>
                             {/*  Créez un groupe de boutons qui permettent de
                             modifier ou de supprimer un article */}
                             <td>

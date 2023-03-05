@@ -1,40 +1,86 @@
-// Import de React, useEffect et useState depuis la bibliothèque React
 import React, { useEffect, useState } from "react";
-// Import de la fonction getCategories qui permet de récupérer toutes les catégories
 import { getCategories } from "../../services/api";
-// composant pour editer un article
-const FormEditArticle = ({
-    register, // fonction register de react-hook-form
-    errors, // objet contenant les erreurs de validation
-    closeModal, // fonction pour fermer la modal
-    onSubmit, // fonction pour soumettre le formulaire
-    article, // article à éditer
-}) => {
-    // State pour l'aperçu de l'image et la gestion de la modification de l'image
-    const [imagePreview, setImagePreview] = useState(article.image);
-    // State pour stocker les catégories récupérées depuis l'API
+import { selectFirstFiveWords } from "../../utils/fonctions/selectFirstFiveWords";
+const FormEditArticle = ({ closeModal, onSubmit, article }) => {
     const [categories, setCategories] = useState([]);
-    // Fonction pour gérer l'aperçu de l'image avant l'envoi du formulaire
-    const handleImagePreview = (e) => {
-        if (e.target.files[0]) {
-            setImagePreview(URL.createObjectURL(e.target.files[0]));
-        } else {
-            setImagePreview(null);
-        }
+    const [formValues, setFormValues] = useState({
+        title: article.title,
+        description: article.description,
+        image: article.image,
+        category: article.category,
+        content: article.content,
+    });
+
+    const [formErrors, setFormErrors] = useState({
+        title: "",
+        description: "",
+        image: "",
+        category: "",
+        content: "",
+    });
+
+    const handleInputChange = (e) => {
+        const { name, value, files } = e.target;
+
+        setFormValues({
+            ...formValues,
+            [name]: files ? files[0] : value,
+        });
+        validateField(name, files ? files[0] : value);
     };
-    // Utilisation du hook useEffect pour récupérer les catégories depuis
-    // l'API lors du chargement du composant
+    const validateField = (name, value) => {
+        let errorMessage = "";
+
+        switch (name) {
+            case "title":
+                if (value.trim().length < 5) {
+                    errorMessage =
+                        "Le titre doit contenir au moins 5 caractères.";
+                }
+                break;
+            case "description":
+                if (value.trim().length < 15) {
+                    errorMessage =
+                        "Le titre doit contenir au moins 15 caractères.";
+                }
+                break;
+            case "image":
+                if (!value) {
+                    errorMessage = "Une image est requise.";
+                }
+                break;
+            case "category":
+                if (!value) {
+                    errorMessage = "Veuillez sélectionner une catégorie.";
+                }
+                break;
+            case "content":
+                if (value.length < 50) {
+                    errorMessage =
+                        "Le contenu doit contenir au moins 50 caractères.";
+                }
+                break;
+            default:
+                break;
+        }
+
+        setFormErrors({
+            ...formErrors,
+            [name]: errorMessage,
+        });
+    };
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        onSubmit(formValues);
+    };
+
+    const isFormValid = () => {
+        return Object.keys(formErrors).every((key) => formErrors[key] === "");
+    };
     useEffect(() => {
-        // Appel de la fonction getCategories depuis le service api pour
-        // récupérer les catégories
         getCategories()
-            .then((res) => {
-                // Stockage des catégories dans le state categories
-                setCategories(res.data);
-            })
-            .then((error) => {
-                // Gestion des erreurs éventuelles
-            });
+            .then((res) => setCategories(res.data))
+            .catch((er) => er);
     }, []);
 
     return (
@@ -44,7 +90,8 @@ const FormEditArticle = ({
                     {/* Header de la modal */}
                     <div className="modal-header">
                         <h5 className="modal-title">
-                            Edition de l'article {article.title}
+                            Edition de l'article{" "}
+                            {selectFirstFiveWords(article.title)}
                         </h5>
                         <button
                             type="button"
@@ -58,25 +105,26 @@ const FormEditArticle = ({
                         {/* Formulaire de création d'article */}
                         <form
                             className="mx-auto my-5 bg-dark text-light p-5 col-12 rounded-lg"
-                            onSubmit={onSubmit}
+                            onSubmit={handleSubmit}
                         >
                             {/* Champ titre */}
                             <div className="form-group mb-4">
                                 <label htmlFor="title">Titre</label>
                                 <input
-                                    defaultValue={article.title}
                                     type="text"
                                     className={`form-control ${
-                                        errors?.title ? "is-invalid" : ""
+                                        formErrors.title ? "is-invalid" : ""
                                     }`}
                                     id="title"
                                     name="title"
                                     placeholder="Titre"
-                                    {...register("title", { required: true })}
+                                    required
+                                    value={formValues.title}
+                                    onChange={handleInputChange}
                                 />
-                                {errors?.title && (
+                                {formErrors.title && (
                                     <div className="invalid-feedback">
-                                        Le titre est requis
+                                        {formErrors.title}
                                     </div>
                                 )}
                             </div>
@@ -84,21 +132,22 @@ const FormEditArticle = ({
                             <div className="form-group mb-4">
                                 <label htmlFor="description">Description</label>
                                 <input
-                                    defaultValue={article.description}
                                     type="text"
                                     className={`form-control ${
-                                        errors?.description ? "is-invalid" : ""
+                                        formErrors.description
+                                            ? "is-invalid"
+                                            : ""
                                     }`}
                                     id="description"
                                     name="description"
                                     placeholder="Description"
-                                    {...register("description", {
-                                        required: true,
-                                    })}
+                                    required
+                                    value={formValues.description}
+                                    onChange={handleInputChange}
                                 />
-                                {errors?.description && (
+                                {formErrors.description && (
                                     <div className="invalid-feedback">
-                                        La description est requise
+                                        {formErrors.description}
                                     </div>
                                 )}
                             </div>
@@ -108,25 +157,32 @@ const FormEditArticle = ({
                                 <input
                                     type="file"
                                     className={`form-control-file ${
-                                        errors?.image ? "is-invalid" : ""
+                                        formErrors.image ? "is-invalid" : ""
                                     }`}
                                     accept="image/*"
                                     id="image"
                                     name="image"
-                                    {...register("image")}
-                                    onChange={handleImagePreview}
+                                    onChange={handleInputChange}
                                 />
                                 {/* Affichage de l'aperçu de l'image */}
-                                {imagePreview && (
+                                {typeof formValues.image !== "string" ? (
                                     <img
-                                        src={imagePreview}
+                                        src={URL.createObjectURL(
+                                            formValues.image
+                                        )}
+                                        alt=" Preview"
+                                        className="mt-3 img-fluid"
+                                    />
+                                ) : (
+                                    <img
+                                        src={formValues.image}
                                         alt=" Preview"
                                         className="mt-3 img-fluid"
                                     />
                                 )}
-                                {errors?.image && (
+                                {formErrors.image && (
                                     <div className="invalid-feedback">
-                                        L'image est requise
+                                        {formErrors.image}
                                     </div>
                                 )}
                             </div>
@@ -135,13 +191,18 @@ const FormEditArticle = ({
                                 <label htmlFor="category">Catégorie</label>
                                 <select
                                     className={`form-control ${
-                                        errors?.category ? "is-invalid" : ""
+                                        formErrors.category ? "is-invalid" : ""
                                     }`}
                                     id="category"
                                     name="category"
-                                    defaultValue={article.category._id}
+                                    value={formValues.category}
+                                    onChange={handleInputChange}
+                                    required
                                 >
                                     {/* Option pour sélectionner une catégorie */}
+                                    <option value="">
+                                        Sélectionnez une catégorie
+                                    </option>
                                     {categories.map((category, index) => {
                                         return (
                                             <option
@@ -153,9 +214,9 @@ const FormEditArticle = ({
                                         );
                                     })}
                                 </select>
-                                {errors?.category && (
+                                {formErrors.category && (
                                     <div className="invalid-feedback">
-                                        La catégorie est requise
+                                        {formErrors.category}
                                     </div>
                                 )}
                             </div>
@@ -163,26 +224,29 @@ const FormEditArticle = ({
                             <div className="form-group mb-4">
                                 <label htmlFor="content">Contenu</label>
                                 <textarea
-                                    defaultValue={article.content}
                                     className={`form-control ${
-                                        errors?.content ? "is-invalid" : ""
+                                        formErrors.content ? "is-invalid" : ""
                                     }`}
                                     id="content"
                                     name="content"
                                     rows="5"
-                                    {...register("content", { required: true })}
-                                ></textarea>
-                                {errors?.content && (
+                                    required
+                                    value={formValues.content}
+                                    onChange={handleInputChange}
+                                ></textarea>{" "}
+                                {formErrors.content && (
                                     <div className="invalid-feedback">
-                                        Le contenu est requis
+                                        {formErrors.content}
                                     </div>
                                 )}
                             </div>
+                            {/* Bouton de soumission */}
                             <div className="row">
                                 <div className="col text-center">
                                     <button
                                         type="submit"
                                         className="btn btn-primary"
+                                        disabled={!isFormValid()}
                                     >
                                         Modifier
                                     </button>
@@ -206,5 +270,4 @@ const FormEditArticle = ({
     );
 };
 
-// Export du composant FormEditArticle
 export default FormEditArticle;

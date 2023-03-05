@@ -2,8 +2,6 @@
 import axios from "axios";
 // un hook de React qui permet d'ajouter des états locaux à un composant fonctionnel
 import { useState } from "react";
-//un hook de React qui permet de gérer facilement les formulaires
-import { useForm } from "react-hook-form";
 //composant pour creer un article
 import FormCreateArticle from "../../components/article/FormCreateArticle";
 //composant pour editer un article
@@ -31,32 +29,23 @@ const useModalArticles = ({ onUpdateArticles }) => {
     const [mode, setMode] = useState("create");
     // state pour gerer les messages d'erreurs
     const [messageError, setMessageError] = useState(null);
-    const {
-        reset, // reset est une fonction qui permet de remettre les champs du formulaire à leur état initial.
-        register, // register est une fonction qui permet d'associer les champs du formulaire à l'état du formulaire.
-        handleSubmit, // handleSubmit est une fonction qui permet de gérer la soumission du formulaire.
-        formState: { errors }, // errors est un objet qui stocke les erreurs de validation pour chaque champ du formulaire.
-    } = useForm();
 
-    // Cette fonction est utilisée pour ouvrir la modal
     const openModal = (article, mode) => {
-        setIsOpen(true); // changer la valeur de isOpen à true pour ouvrir la modal
-        setArticle(article); // définit l'article pour l'afficher dans la modal
-        setMode(mode); // définit le mode de la modal (création ou modification)
+        setIsOpen(true);
+        setArticle(article);
+        setMode(mode);
     };
 
-    // Cette fonction est utilisée pour fermer la modal
     const closeModal = () => {
-        setIsOpen(false); // changer la valeur de isOpen à false pour fermer la modal
-        reset(); // reset les valeurs du formulaire de la modal
-        setArticle(null); // définir l'article à null
-        setMessageError(null); // définir le message d'erreur à null
+        setIsOpen(false);
+        setArticle(null);
+        setMessageError(null);
         setMode("create"); // définir le mode de la modal à "création"
     };
 
     const handleCloudinaryUpload = async (data) => {
         const formData = new FormData();
-        formData.append("file", data.image[0]); // Ajoute le fichier image sélectionné à formData
+        formData.append("file", data.image); // Ajoute le fichier image sélectionné à formData
         formData.append("upload_preset", "f9dkjbxa"); // Ajoute le upload_preset de cloudinary à formData
         formData.append("cloud_name", "noumedemtamiflorian"); // Ajoute le cloud_name de cloudinary à formData
         const response = await axios.post(URL_CLOUDINARY_UPLOAD, formData); // Envoie la requête POST pour uploader l'image sur cloudinary
@@ -96,9 +85,10 @@ const useModalArticles = ({ onUpdateArticles }) => {
         try {
             // Récupérer l'URL de l'image, soit via Cloudinary,
             //  soit en utilisant l'URL de l'image existante
-            const imageUrl = data.image[0]
-                ? await handleCloudinaryUpload(data)
-                : article.image;
+            const imageUrl =
+                typeof data.image !== String
+                    ? await handleCloudinaryUpload(data)
+                    : article.image;
             // Créer un objet avec les données reçues et l'URL de l'image
             const formDataWithImageUrl = {
                 ...data,
@@ -113,17 +103,14 @@ const useModalArticles = ({ onUpdateArticles }) => {
                 throw new Error("L'article existe deja");
                 // S'il y a réussite
             } else if (res.status === 200) {
-                // Mettre à jour la liste des articles
                 onUpdateArticles((pre) => {
                     const updateArticles = pre.map((preA) =>
-                        preA._id === article._id
-                            ? { ...formDataWithImageUrl }
-                            : preA
+                        preA._id === article._id ? { ...res.data } : preA
                     );
                     return [...updateArticles];
                 });
                 // Mettre à jour l'article couran
-                setArticle(formDataWithImageUrl);
+                setArticle(res.data);
                 // Fermer la modale
                 closeModal();
             }
@@ -147,7 +134,6 @@ const useModalArticles = ({ onUpdateArticles }) => {
                 setMessageError("Article non trouvé");
                 setMode("error");
                 setIsOpen(true);
-                reset(); // Réinitialisation du formulaire
                 // Si l'article est trouvé et supprimé
             } else if (response.status === 200) {
                 onUpdateArticles((prevArticle) => [
@@ -169,9 +155,7 @@ const useModalArticles = ({ onUpdateArticles }) => {
             return (
                 <FormCreateArticle
                     closeModal={closeModal}
-                    onSubmit={handleSubmit(onSubmit)}
-                    register={register}
-                    errors={errors}
+                    onSubmit={onSubmit}
                 />
             );
         } else if (mode === "edit") {
@@ -179,9 +163,7 @@ const useModalArticles = ({ onUpdateArticles }) => {
             return (
                 <FormEditArticle
                     closeModal={closeModal}
-                    onSubmit={handleSubmit(handleEdit)}
-                    register={register}
-                    errors={errors}
+                    onSubmit={handleEdit}
                     article={article}
                 />
             );
