@@ -1,13 +1,13 @@
 import React from "react";
 
-const ModalDeleteElement = ({ category, closeModal, handleDelete }) => {
+const ModalDeleteElement = ({ element, closeModal, handleDelete }) => {
     return (
         <div className="modal d-block fade show">
             <div className="modal-dialog">
                 <div className="modal-content ">
                     <div className="modal-header">
                         <h5 className="modal-title">
-                            Suppression de la categorie {category.title}
+                            Suppression de {element.title}
                         </h5>
                         <button
                             type="button"
@@ -19,8 +19,8 @@ const ModalDeleteElement = ({ category, closeModal, handleDelete }) => {
                     </div>
                     <div className="modal-body">
                         <div>
-                            Voulez vous supprimer la categorie qui a pour titre{" "}
-                            {category.title}
+                            Voulez vous supprimer l'element qui a pour titre{" "}
+                            {element.title}
                         </div>
                         <button
                             onClick={handleDelete}
@@ -30,6 +30,7 @@ const ModalDeleteElement = ({ category, closeModal, handleDelete }) => {
                             Supprimer
                         </button>
                     </div>
+                    {/* Pied de la modal contenant un bouton pour fermer la modal */}
                     <div className="modal-footer">
                         <button
                             type="button"

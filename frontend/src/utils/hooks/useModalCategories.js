@@ -12,7 +12,7 @@ import {
     putApiCategory,
 } from "../../services/api";
 
-const useModal = ({ onUpdateCategories }) => {
+const useModalCategories = ({ onUpdateCategories }) => {
     // isOpen représente si la boîte modale est ouverte ou fermée
     const [isOpen, setIsOpen] = useState(false);
     // category représente la catégorie actuellement sélectionnée dans la boîte modale
@@ -145,7 +145,7 @@ const useModal = ({ onUpdateCategories }) => {
             // Si le mode est "delete"
             return (
                 <ModalDeleteElement
-                    category={category}
+                    element={category}
                     handleDelete={handleDelete}
                     closeModal={closeModal}
                 />
@@ -183,4 +183,4 @@ const useModal = ({ onUpdateCategories }) => {
     };
 };
 
-export default useModal;
+export default useModalCategories;

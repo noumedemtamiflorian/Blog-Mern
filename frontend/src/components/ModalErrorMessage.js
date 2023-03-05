@@ -6,6 +6,7 @@ const ModalErrorMessage = ({ closeModal, messageError }) => {
             <div className="modal-dialog">
                 <div className="modal-content ">
                     <div className="modal-header">
+                        {/* Titre de la fenêtre modale */}
                         <h5 className="modal-title">Message D'erreurs</h5>
                         <button
                             type="button"
@@ -17,6 +18,7 @@ const ModalErrorMessage = ({ closeModal, messageError }) => {
                     </div>
                     <div className="modal-body text-danger">{messageError}</div>
                     <div className="modal-footer">
+                        {/* Bouton pour fermer la fenêtre modale */}
                         <button
                             type="button"
                             className="btn btn-secondary"

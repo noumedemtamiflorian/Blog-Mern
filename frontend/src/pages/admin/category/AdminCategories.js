@@ -4,13 +4,13 @@ import React, { useEffect, useState } from "react";
 import { getCategories } from "../../../services/api";
 // importation de la fonction useModal pour gerer les modals d'edition,
 // creation et suppression
-import useModal from "../../../utils/hooks/useModal";
+import useModalCategories from "../../../utils/hooks/useModalCategories";
 
 // Composant Pour Gerer le CRUD sur les categories
 const AdminCategories = () => {
     const [categories, setCategories] = useState([]);
 
-    const { isOpen, openModal, category, Modal } = useModal({
+    const { isOpen, openModal, category, Modal } = useModalCategories({
         onUpdateCategories: setCategories,
     });
     // Utilisation d'un effet qui se déclenche lors du montage du composant et permet
