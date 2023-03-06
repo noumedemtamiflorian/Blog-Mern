@@ -5,6 +5,7 @@ import { getArticles } from "../../../services/api";
 import { selectFirstFiveWords } from "../../../utils/fonctions/selectFirstFiveWords";
 // Importation du hook useModalArticles
 import useModalArticles from "../../../utils/hooks/useModalArticles";
+import usePagination from "../../../utils/hooks/usePagination";
 
 // Définition du composant AdminArticles
 const AdminArticles = () => {
@@ -15,6 +16,12 @@ const AdminArticles = () => {
     const { isOpen, openModal, article, Modal } = useModalArticles({
         onUpdateArticles: setArticles,
     });
+
+    const { Pagination, currentArticles } = usePagination({
+        articles: articles,
+        perPage: 5,
+    });
+
     // Utilisation de useEffect pour récupérer les articles
     useEffect(() => {
         getArticles().then((res) => {
@@ -50,7 +57,7 @@ const AdminArticles = () => {
                 </thead>
                 {/* Parcourez les articles et affichez chaque entrée dans une ligne */}
                 <tbody>
-                    {articles.map((article, index) => (
+                    {currentArticles?.map((article, index) => (
                         <tr key={index}>
                             <td>{index + 1}</td>
                             <td>{selectFirstFiveWords(article?.title)}</td>
@@ -84,6 +91,7 @@ const AdminArticles = () => {
                 </tbody>
             </table>
             {isOpen ? <Modal /> : null}
+            <Pagination />
         </div>
     );
 };

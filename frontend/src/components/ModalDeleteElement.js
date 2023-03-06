@@ -7,7 +7,8 @@ const ModalDeleteElement = ({ element, closeModal, handleDelete }) => {
                 <div className="modal-content ">
                     <div className="modal-header">
                         <h5 className="modal-title">
-                            Suppression de {element.title}
+                            Suppression de{" "}
+                            {!element.title ? element.content : element.title}
                         </h5>
                         <button
                             type="button"
@@ -20,7 +21,7 @@ const ModalDeleteElement = ({ element, closeModal, handleDelete }) => {
                     <div className="modal-body">
                         <div>
                             Voulez vous supprimer l'element qui a pour titre{" "}
-                            {element.title}
+                            {!element.title ? element.content : element.title}
                         </div>
                         <button
                             onClick={handleDelete}

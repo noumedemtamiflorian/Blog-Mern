@@ -5,6 +5,7 @@ import { getCategories } from "../../../services/api";
 // importation de la fonction useModal pour gerer les modals d'edition,
 // creation et suppression
 import useModalCategories from "../../../utils/hooks/useModalCategories";
+import usePagination from "../../../utils/hooks/usePagination";
 
 // Composant Pour Gerer le CRUD sur les categories
 const AdminCategories = () => {
@@ -13,6 +14,12 @@ const AdminCategories = () => {
     const { isOpen, openModal, category, Modal } = useModalCategories({
         onUpdateCategories: setCategories,
     });
+
+    const { Pagination, currentArticles } = usePagination({
+        articles: categories,
+        perPage: 5,
+    });
+
     // Utilisation d'un effet qui se déclenche lors du montage du composant et permet
     // de récupérer les catégories depuis l'API
     useEffect(() => {
@@ -49,7 +56,7 @@ const AdminCategories = () => {
                 </thead>
                 <tbody>
                     {/* Loop through categories array */}
-                    {categories.map((category, index) => (
+                    {currentArticles?.map((category, index) => (
                         <tr key={index}>
                             <td>{index + 1}</td>
                             <td>{category.title}</td>
@@ -80,6 +87,7 @@ const AdminCategories = () => {
             </table>
             {/* Modal */}
             {isOpen ? <Modal /> : null}
+            <Pagination />
         </div>
     );
 };

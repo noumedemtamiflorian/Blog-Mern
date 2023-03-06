@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import FormCreateComment from "../../components/FormCreateComment";
-import FormDeleteComment from "../../components/FormDeleteComment";
-import FormEditComment from "../../components/FormEditComment";
+import FormCreateComment from "../../components/comment/FormCreateComment";
+import ModalDeleteElement from "../../components/ModalDeleteElement";
+import FormEditComment from "../../components/comment/FormEditComment";
 import { deleteComment, editComemnt, postComment } from "../../services/api";
 
 const useModalComment = ({ setArticle }) => {
@@ -93,9 +93,9 @@ const useModalComment = ({ setArticle }) => {
             );
         } else if (mode === "delete") {
             return (
-                <FormDeleteComment
+                <ModalDeleteElement
                     handleDelete={handleDelete}
-                    comment={comment}
+                    element={comment}
                     closeModal={closeModal}
                 />
             );
