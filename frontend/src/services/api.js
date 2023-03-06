@@ -16,6 +16,14 @@ export const getCategories = async () => {
     }
 };
 
+export const getCategory = async (_id) => {
+    try {
+        const response = await axios.get(`${URL_CATEGORY}/${_id}`);
+        return response;
+    } catch (error) {
+        return error.response;
+    }
+};
 export const postCategory = async (category) => {
     try {
         const response = await axios.post(URL_CATEGORY, category);
