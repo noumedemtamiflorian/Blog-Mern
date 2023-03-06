@@ -138,7 +138,7 @@ const useModalArticles = ({ onUpdateArticles }) => {
             } else if (response.status === 200) {
                 onUpdateArticles((prevArticle) => [
                     ...prevArticle.filter(
-                        (prevArticle) => prevArticle._id != article._id
+                        (prevArticle) => prevArticle._id !== article._id
                     ),
                 ]);
                 closeModal();

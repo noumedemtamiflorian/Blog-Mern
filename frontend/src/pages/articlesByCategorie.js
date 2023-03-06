@@ -1,22 +1,24 @@
 import React, { useEffect, useState } from "react";
-import Post from "../components/Post";
+import { Link, useParams } from "react-router-dom";
+import Post from "../components/article/Post";
 import { getCategories, getCategory } from "../services/api";
 import usePagination from "../utils/hooks/usePagination";
 
 const ArticlesByCategorie = () => {
+    const { id } = useParams();
     const [categories, setCategories] = useState([]);
     const [category, setCategory] = useState({});
     const [articles, setArticles] = useState([]);
 
     const { Pagination, currentArticles } = usePagination({
         articles: articles,
-        perPage: 1,
+        perPage: 3,
     });
 
     useEffect(() => {
         async function fetchData() {
             const [category, categories] = await Promise.all([
-                getCategory("63f60a515e8984a53acf1c48"),
+                getCategory(id),
                 getCategories(),
             ]);
             setCategory(category.data);
@@ -24,16 +26,20 @@ const ArticlesByCategorie = () => {
             setCategories(categories.data);
         }
         fetchData();
-    }, []);
+    }, [id]);
 
     return (
         <div>
             <main className="row">
                 <article className="col-sm-7 col-md-8 col-lg-9 col-xl-10 justify-content-center text-center row">
+                    <h1 className="text-center">
+                        Articles Pour la categorie {category.title}
+                    </h1>
                     {currentArticles?.map(
-                        ({ title, image, description }, index) => {
+                        ({ title, image, description, _id }, index) => {
                             return (
                                 <Post
+                                    _id={_id}
                                     title={title}
                                     image={image}
                                     description={description}
@@ -51,7 +57,11 @@ const ArticlesByCategorie = () => {
                     <ul className="list-group mr-4">
                         {categories.map(({ title, _id }) => {
                             return (
-                                <a key={_id} href={"/posts/categorie/" + _id}>
+                                <Link
+                                    key={title}
+                                    to={`/articles/categorie/${_id}`}
+                                >
+                                    {" "}
                                     <li
                                         className={`list-group-item list-group-item-action ${
                                             category._id === _id
@@ -61,7 +71,7 @@ const ArticlesByCategorie = () => {
                                     >
                                         {title}
                                     </li>
-                                </a>
+                                </Link>
                             );
                         })}
                     </ul>

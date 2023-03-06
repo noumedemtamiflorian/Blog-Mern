@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import Post from "../components/article/Post";
 import { getArticles, getCategories } from "../services/api";
 import UsePagination from "../utils/hooks/usePagination";
@@ -28,10 +29,12 @@ const Home = () => {
         <div>
             <main className="row">
                 <article className="col-sm-7 col-md-8 col-lg-9 col-xl-10 justify-content-center text-center row">
+                    <h1 className="text-center">Nos Articles</h1>
                     {currentArticles?.map(
-                        ({ title, image, description }, index) => {
+                        ({ title, image, description, _id }, index) => {
                             return (
                                 <Post
+                                    _id={_id}
                                     title={title}
                                     image={image}
                                     description={description}
@@ -49,11 +52,15 @@ const Home = () => {
                     <ul className="list-group mr-4">
                         {categories.map(({ title, _id }) => {
                             return (
-                                <button key={_id} href="#">
+                                <Link
+                                    key={title}
+                                    to={`/articles/categorie/${_id}`}
+                                >
+                                    {" "}
                                     <li className="list-group-item list-group-item-action">
                                         {title}
                                     </li>
-                                </button>
+                                </Link>
                             );
                         })}
                     </ul>

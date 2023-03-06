@@ -1,19 +1,33 @@
 import "../node_modules/bootstrap/dist/css/bootstrap.css";
 import "../node_modules/bootstrap/dist/js/bootstrap.js";
 import "./App.css";
-import Footer from "./components/common/Footer";
-// This line imports the Header component from the Header.js file in the components/common directory
+
+import React from "react";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+import Home from "../src/pages/home";
+import DetailPost from "../src/pages/detailPost";
+import ArticlesByCategorie from "../src/pages/articlesByCategorie";
+import AdminCategories from "../src/pages/admin/category/adminCategories";
+import AdminArticles from "../src/pages/admin/article/adminArticles";
 import Header from "./components/common/Header";
-import ArticlesByCategorie from "./pages/articlesByCategorie";
+import Footer from "./components/common/Footer";
 
 function App() {
-    // Return a div with the className of "App" and the text "Init Frontend" as its child
     return (
-        <>
+        <BrowserRouter>
             <Header />
-            <ArticlesByCategorie />
+            <Routes>
+                <Route path="/" element={<Home />} />
+                <Route path="/article/:id" element={<DetailPost />} />
+                <Route
+                    path="/articles/categorie/:id"
+                    element={<ArticlesByCategorie />}
+                />
+                <Route path="/admin/category" element={<AdminCategories />} />
+                <Route path="/admin/article" element={<AdminArticles />} />
+            </Routes>
             <Footer />
-        </>
+        </BrowserRouter>
     );
 }
 

@@ -55,3 +55,7 @@
   height: 400px;
   object-fit: cover;
 }
+
+.post-card{
+  width: 18rem
+}

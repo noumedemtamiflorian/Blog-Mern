@@ -109,7 +109,7 @@ const useModalCategories = ({ onUpdateCategories }) => {
             } else if (response.status === 200) {
                 onUpdateCategories((prevCategories) => [
                     ...prevCategories.filter(
-                        (prevCategory) => prevCategory._id != category._id
+                        (prevCategory) => prevCategory._id !== category._id
                     ),
                 ]);
                 closeModal();
