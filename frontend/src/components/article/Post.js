@@ -4,8 +4,8 @@ import { selectFirstFiveWords } from "../../utils/fonctions/selectFirstFiveWords
 const Post = ({ _id, title, image, description }) => {
     return (
         <div className="row  col-lg-6 col-xl-4">
-            <div className="col-sm">
-                <div className="card my-4" style={{ width: "18rem" }}>
+            <div className="col-sm d-flex justify-content-center">
+                <div className="card my-4 post-card">
                     <div>
                         <img
                             className="card-img"
