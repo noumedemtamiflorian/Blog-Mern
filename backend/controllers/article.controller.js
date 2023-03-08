@@ -64,10 +64,7 @@ exports.findOne = async (req, res) => {
 exports.findAll = async (req, res) => {
     try {
         // Récupérer tous les articles et leur catégorie
-        const articles = await Article.find().populate({
-            path: "category",
-            select: "title",
-        });
+        const articles = await Article.find();
         // Retourner les articles au format JSON
         return res.json(articles);
     } catch (err) {
@@ -80,11 +77,11 @@ exports.findAll = async (req, res) => {
 exports.update = async (req, res) => {
     try {
         // Récupérer les données du corps de la requête
-        const { title, content, description, image } = req.body;
+        const { title, content, description, image, category } = req.body;
         // Trouver et mettre à jour un article avec les nouvelles données
         const article = await Article.findByIdAndUpdate(
             req.params.id,
-            { title, content, description, image },
+            { title, content, description, image, category },
             { new: true }
         );
         // Retourner le nouvel article dans la réponse
