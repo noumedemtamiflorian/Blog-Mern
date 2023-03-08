@@ -1,8 +1,8 @@
-const User = require("../models/user.model");
-
-// Définition de la fonction signup avec la syntaxe async/await
-//  pour rendre la fonction asynchrone
 const bcrypt = require("bcrypt");
+const User = require("../models/user.model");
+const jwt = require("jsonwebtoken");
+
+const SECRETKEY = process.env.SECRETKEY;
 
 exports.signup = async (req, res) => {
     try {
@@ -43,6 +43,45 @@ exports.signup = async (req, res) => {
         return res.status(500).send({
             message:
                 error.message || "Some error occurred while creating the user.",
+        });
+    }
+};
+
+// Connexion
+exports.signin = async (req, res) => {
+    try {
+        // Recherche de l'utilisateur dans la base de données en utilisant son nom
+        const user = await User.findOne({ email: req.body.email });
+
+        // Si l'utilisateur n'est pas trouvé, on retourne une réponse 404
+        if (!user) {
+            return res.status(404).send({ message: "User not found" });
+        }
+
+        // Vérification du mot de passe
+        const passwordMatch = await bcrypt.compare(
+            req.body.password,
+            user.password
+        );
+        if (!passwordMatch) {
+            return res.status(401).send({ message: "Incorrect password" });
+        }
+
+        // Génération d'un jeton avec les informations de l'utilisateur
+        const token = jwt.sign(
+            { userId: user._id, role: user.role, name: user.name },
+            SECRETKEY,
+            {
+                expiresIn: "24h",
+            }
+        );
+
+        // Envoi de la réponse avec le jeton
+        res.send({ message: "User logged in successfully", token });
+    } catch (error) {
+        // Gestion des erreurs avec une réponse 500 en cas d'erreur
+        res.status(500).send({
+            message: error.message || "Some error occurred while logging in.",
         });
     }
 };
