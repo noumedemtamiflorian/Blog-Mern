@@ -38,7 +38,9 @@ const FormEditCategory = ({ onSubmit, closeModal, category }) => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        onSubmit(formValues);
+        if (isFormValid()) {
+            onSubmit(formValues);
+        }
     };
     const isFormValid = () => {
         return Object.keys(formErrors).every((key) => formErrors[key] === "");

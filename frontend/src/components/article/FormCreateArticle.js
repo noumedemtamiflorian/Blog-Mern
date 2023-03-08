@@ -1,9 +1,13 @@
+// Importation de React et des Hooks useEffect et useState
 import React, { useEffect, useState } from "react";
-
+// Importation de la fonction getCategories de l'API pour récupérer toutes les catégories
 import { getCategories } from "../../services/api";
 
+//Formulaire pour creer un article
 const FormCreateArticle = ({ closeModal, onSubmit }) => {
+    // Déclaration de l'état des catégories avec useState
     const [categories, setCategories] = useState([]);
+    // Déclaration de l'état des valeurs du formulaire avec useState
     const [formValues, setFormValues] = useState({
         title: "",
         description: "",
@@ -11,7 +15,7 @@ const FormCreateArticle = ({ closeModal, onSubmit }) => {
         category: "",
         content: "",
     });
-
+    // Déclaration de l'état des erreurs de formulaire avec useState
     const [formErrors, setFormErrors] = useState({
         title: "",
         description: "",
@@ -19,19 +23,28 @@ const FormCreateArticle = ({ closeModal, onSubmit }) => {
         category: "",
         content: "",
     });
-
+    // Fonction qui gère le changement des champs de formulaire
     const handleInputChange = (e) => {
+        // Destructurer les propriétés de l'événement cible : nom, valeur et fichiers
         const { name, value, files } = e.target;
+
+        // Mettre à jour les valeurs du formulaire en étendant l'objet existant avec
+        //  la nouvelle valeur
 
         setFormValues({
             ...formValues,
             [name]: files ? files[0] : value,
+            // Si un fichier est inclus, sélectionner le premier fichier,
+            //  sinon utiliser la valeur du champ
         });
+        // Validation du champ
         validateField(name, files ? files[0] : value);
     };
+    // Fonction qui valide un champ de formulaire
     const validateField = (name, value) => {
         let errorMessage = "";
 
+        // Vérifier la valeur du champ en fonction de son nom
         switch (name) {
             case "title":
                 if (value.trim().length < 5) {
@@ -64,20 +77,25 @@ const FormCreateArticle = ({ closeModal, onSubmit }) => {
             default:
                 break;
         }
-
+        // Mise à jour des erreurs de formulaire
         setFormErrors({
             ...formErrors,
             [name]: errorMessage,
         });
     };
+    // Fonction qui gère la soumission du formulaire
     const handleSubmit = (e) => {
         e.preventDefault();
-        onSubmit(formValues);
+        // Soumission du formulaire si les champs sont valides
+        if (isFormValid()) {
+            onSubmit(formValues);
+        }
     };
-
+    // Fonction qui gère permet de savoir si un formulaire est valide
     const isFormValid = () => {
         return Object.keys(formErrors).every((key) => formErrors[key] === "");
     };
+    // Effet secondaire pour récupérer les catégories
     useEffect(() => {
         getCategories()
             .then((res) => setCategories(res.data))

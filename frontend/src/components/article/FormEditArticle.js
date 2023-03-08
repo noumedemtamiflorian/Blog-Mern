@@ -71,7 +71,9 @@ const FormEditArticle = ({ closeModal, onSubmit, article }) => {
     };
     const handleSubmit = (e) => {
         e.preventDefault();
-        onSubmit(formValues);
+        if (isFormValid()) {
+            onSubmit(formValues);
+        }
     };
 
     const isFormValid = () => {

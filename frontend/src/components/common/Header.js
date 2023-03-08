@@ -11,14 +11,12 @@ const Header = () => {
             </h1>
             <nav>
                 <ul className="list-unstyled d-flex">
-                    <li className="btn btn-link mr-4 mx-4">
-                        <Link to="/admin/article">Articles</Link>
-                    </li>
-                    <li className="btn btn-link mr-4 mx-4">
-                        <Link to="/admin/category">Categories</Link>
-                    </li>
-                    <li className="btn btn-link mr-4 mx-4">Login</li>
-                    <li className="btn btn-link mr-4 mx-4">Register</li>
+                    <Link to="/admin/article">
+                        <li className="btn btn-link mr-4 mx-4">Articles</li>
+                    </Link>
+                    <Link to="/admin/category">
+                        <li className="btn btn-link mr-4 mx-4">Categories</li>
+                    </Link>
                 </ul>
             </nav>
         </header>

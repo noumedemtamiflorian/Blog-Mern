@@ -5,7 +5,8 @@ import FormCreateCategory from "../../components/category/FormCreateCategory";
 import FormEditCategory from "../../components/category/FormEditCategory";
 import ModalDeleteElement from "../../components/ModalDeleteElement";
 import ModalErrorMessage from "../../components/ModalErrorMessage";
-// On importe la fonction postCategory, la fonction asynchrone qui permet de creer une categorie via l'API
+// On importe la fonction postCategory, la fonction asynchrone qui permet de creer
+// une categorie via l'API
 import {
     deleteApiCategory,
     postCategory,
@@ -167,14 +168,10 @@ const useModalCategories = ({ onUpdateCategories }) => {
     // qui permettent de gérer la boite modale pour la création, l'édition, la suppression
     // et l'affichage des messages d'erreur.
     // isOpen: une propriété booléenne qui indique si la boite modale est ouverte ou non
-    // category: une propriété qui contient les données de la catégorie sélectionnée
-    // mode: une propriété qui indique le mode actuel de la boite modale (création, édition, suppression, erreur)
-    // openModal: une fonction qui ouvre la boite modale et met à jour les données de la catégorie et le mode
-    // closeModal: une fonction qui ferme la boite modale et réinitialise les données de la catégorie et le mode
-    // handleSave: une fonction qui gère l'enregistrement de la catégorie modifiée
-    // handleDelete: une fonction qui gère la suppression de la catégorie sélectionnée
-    // handleCreate: une fonction qui gère la création d'une nouvelle catégorie
-    // Modal: une fonction qui retourne le composant de la boite modale en fonction du mode actuel
+    // openModal: une fonction qui ouvre la boite modale et met à jour les données de
+    //  la catégorie et le mode
+    // closeModal: une fonction qui ferme la boite modale et réinitialise les données de
+    // la catégorie et le mode
     return {
         isOpen,
         category,

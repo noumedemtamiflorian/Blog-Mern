@@ -17,8 +17,8 @@ const AdminArticles = () => {
         onUpdateArticles: setArticles,
     });
 
-    const { Pagination, currentArticles } = usePagination({
-        articles: articles,
+    const { Pagination, currentElements } = usePagination({
+        elements: articles,
         perPage: 5,
     });
 
@@ -31,7 +31,7 @@ const AdminArticles = () => {
 
     return (
         // Créer une div qui contient la table et les boutons
-        <div className="container">
+        <div className="container flex-grow-1">
             {/* Créez une div qui s'affiche en haut de la table  */}
             <div className="d-flex justify-content-between align-items-center mb-4">
                 <h2>Articles</h2>
@@ -46,50 +46,54 @@ const AdminArticles = () => {
                 </div>
             </div>
             {/* Créez la table qui affiche les articles */}
-            <table className="table text-center">
-                <thead>
-                    <tr>
-                        <th>#</th>
-                        <th>Title</th>
-                        <th>Description</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                {/* Parcourez les articles et affichez chaque entrée dans une ligne */}
-                <tbody>
-                    {currentArticles?.map((article, index) => (
-                        <tr key={index}>
-                            <td>{index + 1}</td>
-                            <td>{selectFirstFiveWords(article?.title)}</td>
-                            <td>
-                                {selectFirstFiveWords(article?.description)}
-                            </td>
-                            {/*  Créez un groupe de boutons qui permettent de
-                            modifier ou de supprimer un article */}
-                            <td>
-                                <div className="btn-group">
-                                    <button
-                                        onClick={() =>
-                                            openModal(article, "edit")
-                                        }
-                                        className="btn btn-primary"
-                                    >
-                                        Edit
-                                    </button>
-                                    <button
-                                        onClick={() =>
-                                            openModal(article, "delete")
-                                        }
-                                        className="btn btn-danger"
-                                    >
-                                        Delete
-                                    </button>
-                                </div>
-                            </td>
+            {currentElements.length === 0 ? (
+                <p className="text-center">Aucun article pour le moment</p>
+            ) : (
+                <table className="table text-center">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Title</th>
+                            <th>Description</th>
+                            <th>Actions</th>
                         </tr>
-                    ))}
-                </tbody>
-            </table>
+                    </thead>
+                    {/* Parcourez les articles et affichez chaque entrée dans une ligne */}
+                    <tbody>
+                        {currentElements?.map((article, index) => (
+                            <tr key={index}>
+                                <td>{index + 1}</td>
+                                <td>{selectFirstFiveWords(article?.title)}</td>
+                                <td>
+                                    {selectFirstFiveWords(article?.description)}
+                                </td>
+                                {/*  Créez un groupe de boutons qui permettent de
+                            modifier ou de supprimer un article */}
+                                <td>
+                                    <div className="btn-group">
+                                        <button
+                                            onClick={() =>
+                                                openModal(article, "edit")
+                                            }
+                                            className="btn btn-primary"
+                                        >
+                                            Edit
+                                        </button>
+                                        <button
+                                            onClick={() =>
+                                                openModal(article, "delete")
+                                            }
+                                            className="btn btn-danger"
+                                        >
+                                            Delete
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            )}
             {isOpen ? <Modal /> : null}
             <Pagination />
         </div>

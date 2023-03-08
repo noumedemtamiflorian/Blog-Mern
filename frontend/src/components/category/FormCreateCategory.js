@@ -1,7 +1,11 @@
+// Import de React et useState depuis la bibliothèque React
 import React, { useState } from "react";
+// Définition du composant FormCategory avec deux props: closeModal et onSubmit
 const FormCategory = ({ closeModal, onSubmit }) => {
+    // Définition des états initiaux pour le formulaire et les erreurs de validation
     const [formValues, setFormValues] = useState({ title: "" });
     const [formErrors, setFormErrors] = useState({ title: "" });
+    // Fonction appelée à chaque modification de la valeur dans un champ du formulaire
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormValues({
@@ -10,6 +14,7 @@ const FormCategory = ({ closeModal, onSubmit }) => {
         });
         validateField(name, value);
     };
+    // Fonction de validation de champ
     const validateField = (name, value) => {
         let errorMessage = "";
 
@@ -29,6 +34,7 @@ const FormCategory = ({ closeModal, onSubmit }) => {
             [name]: errorMessage,
         });
     };
+    // Fonction appelée lors de la soumission du formulaire
     const handleSubmit = (e) => {
         e.preventDefault();
         if (isFormValid()) {
@@ -36,10 +42,12 @@ const FormCategory = ({ closeModal, onSubmit }) => {
         }
     };
 
+    // Fonction de validation du formulaire
     const isFormValid = () => {
         return Object.keys(formErrors).every((key) => formErrors[key] === "");
     };
 
+    // Retourne le JSX
     return (
         <div className="modal fade show" style={{ display: "block" }}>
             <div className="modal-dialog">

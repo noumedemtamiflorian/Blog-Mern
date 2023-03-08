@@ -2,12 +2,8 @@ html,body {
   height: 100%;
 }
 
-html{
-  background-color: red;
-}
 
 #root {
-  background-color:  blue;
   height: 100%;
   display: flex;
   flex-direction: column;
@@ -58,6 +54,7 @@ main {
   background-color: red;
   color: blue;
 }
+
 .btn-link,a {
   text-decoration: none;
 }
