@@ -23,15 +23,20 @@ exports.signup = async (req, res) => {
         const hashedPassword = await bcrypt.hash(req.body.password, 10);
 
         // Création d'un nouvel utilisateur avec les informations saisies
-        const newUser = new User({
+        let newUser = new User({
             name: req.body.name,
             email: req.body.email,
             password: hashedPassword,
             role: "user",
-            articles: [],
             comments: [],
-            categories: [],
         });
+
+        // Si c'est le premier utilisateur dans la base de données,
+        //  lui donner le rôle d'administrateur
+        const userCount = await User.countDocuments();
+        if (userCount === 0) {
+            newUser.role = "admin";
+        }
 
         // Sauvegarde de l'utilisateur créé dans la base de données
         const data = await newUser.save();
