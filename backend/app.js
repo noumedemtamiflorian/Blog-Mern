@@ -16,6 +16,9 @@ const categoryRoute = require("./routes/category.route");
 // Importer le routeur de commentaires
 const commentRoute = require("./routes/comment.route");
 
+// Importer le routeur d'authentification
+const authRoute = require("./routes/auth.route");
+
 // Chargement des variables d'environnement
 dotenv.config();
 
@@ -48,6 +51,8 @@ app.use("/api/articles", articleRoute);
 app.use("/api/categories", categoryRoute);
 // utiliser la route de commentaire
 app.use("/api/comments", commentRoute);
+// utiliser la route d'authentification
+app.use("/api", authRoute);
 
 // Définition du port
 const port = process.env.PORT || 3000;
