@@ -19,6 +19,9 @@ const commentRoute = require("./routes/comment.route");
 // Importer le routeur d'authentification
 const authRoute = require("./routes/auth.route");
 
+// Importer le routeur d'user
+const userRoute = require("./routes/user.route");
+
 // Chargement des variables d'environnement
 dotenv.config();
 
@@ -53,6 +56,8 @@ app.use("/api/categories", categoryRoute);
 app.use("/api/comments", commentRoute);
 // utiliser la route d'authentification
 app.use("/api", authRoute);
+// utiliser la route d'user
+app.use("/api/users", userRoute);
 
 // Définition du port
 const port = process.env.PORT || 3000;
