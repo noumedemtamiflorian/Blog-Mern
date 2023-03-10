@@ -1,9 +1,9 @@
 // Importer les models de données nécessaires
-const Article = require("../models/article.model"); // Model de données pour les articles
-const Comment = require("../models/comment.model"); // Model de données pour les commentaires
-const Category = require("../models/category.model"); // Model de données pour les catégories
+const Article = require("../models/article.model");
+const Comment = require("../models/comment.model");
+const Category = require("../models/category.model");
 
-// Créer un nouvel article
+// Cette fonction crée un nouvel article
 exports.create = async (req, res) => {
     // Tenter d'exécuter le code
     try {
@@ -31,7 +31,7 @@ exports.create = async (req, res) => {
 
         // Ajouter l'article dans la catégorie correspondante
         await Category.findByIdAndUpdate(category, {
-            $addToSet: { articles: savedArticle._id },
+            $push: { articles: savedArticle._id },
         });
 
         // Renvoyer le nouvel article
@@ -78,12 +78,19 @@ exports.update = async (req, res) => {
     try {
         // Récupérer les données du corps de la requête
         const { title, content, description, image, category } = req.body;
-        // Trouver et mettre à jour un article avec les nouvelles données
-        const article = await Article.findByIdAndUpdate(
-            req.params.id,
-            { title, content, description, image, category },
-            { new: true }
-        );
+        // Vérifier si l'article existe
+        const article = await Article.findById(req.params.id);
+        if (!article) {
+            return res.status(404).json({ message: "Article not found" });
+        }
+        // Mettre à jour les champs de l'article
+        article.title = title || article.title;
+        article.content = content || article.content;
+        article.description = description || article.description;
+        article.image = image || article.image;
+        article.category = category || article.category;
+        // Enregistrer les modifications
+        await article.save();
         // Retourner le nouvel article dans la réponse
         return res.json(article);
     } catch (err) {
@@ -95,25 +102,31 @@ exports.update = async (req, res) => {
 // Supprimer un article
 exports.delete = async (req, res) => {
     try {
-        // Trouver l'article à supprimer
-        const article = await Article.findById(req.params.id);
-        // Vérifier si l'article existe
+        // Récupérer l'ID de l'article à supprimer depuis la requête
+        const articleId = req.params.id;
+
+        // Vérifier si l'article existe en base de données
+        const article = await Article.findById(articleId);
         if (!article) {
             return res.status(404).json({ message: "Article non trouvé" });
         }
+
         // Supprimer l'article
-        const deletedArticle = await Article.findByIdAndDelete(article._id);
-        // Supprimer la catégorie et les commentaires associés à l'article
-        await Promise.all([
-            Category.findByIdAndUpdate(deletedArticle.category, {
-                $pull: { articles: deletedArticle._id },
-            }),
-            Comment.deleteMany({ article: deletedArticle._id }),
-        ]);
+        const deletedArticle = await Article.findByIdAndDelete(articleId);
+
+        // Retirer l'article supprimé de la catégorie correspondante
+        const categoryId = deletedArticle.category;
+        await Category.findByIdAndUpdate(categoryId, {
+            $pull: { articles: deletedArticle._id },
+        });
+
+        // Supprimer tous les commentaires associés à l'article supprimé
+        await Comment.deleteMany({ article: deletedArticle._id });
+
         // Retourner l'article supprimé
         return res.json(deletedArticle);
     } catch (err) {
-        // Retourner une erreur
-        return res.status(403).send({ message: err.message });
+        // En cas d'erreur, retourner un message d'erreur
+        return res.status(403).json({ message: err.message });
     }
 };
