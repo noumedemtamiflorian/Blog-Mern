@@ -1,6 +1,7 @@
-// Récupère le modèle pour la catégorie
-const Category = require("../models/category.model");
-const Article = require("../models/article.model");
+// Importer les models de données nécessaires
+const Article = require("../models/article.model"); // Model de données pour les articles
+const Comment = require("../models/comment.model"); // Model de données pour les commentaires
+const Category = require("../models/category.model"); // Model de données pour les catégories
 
 // Exporte une fonction pour créer une nouvelle catégorie
 exports.create = async (req, res) => {
@@ -25,11 +26,11 @@ exports.create = async (req, res) => {
         await newCategory.save();
 
         // Renvoie un message indiquant que la catégorie a été ajoutée avec succès
-        return res.json({ message: "Catégorie ajoutée avec succès" });
+        return res.json(newCategory);
     } catch (err) {
         console.log(err);
         // Si une erreur se produit, renvoie un code d'erreur et le message d'erreur
-        return res.status(400).json({ message: error.message });
+        return res.status(400).json({ message: err.message });
     }
 };
 
@@ -67,39 +68,56 @@ exports.findOne = async (req, res) => {
 // Mettre a jour la catégorie correspondant à l'ID
 exports.update = async (req, res) => {
     try {
-        const category = await Category.findById(req.params.id);
+        const title = req.body.title;
+        // Vérifie si la catégorie existe déjà
+        const category = await Category.findOne({ title });
+        if (category) {
+            // Si oui, renvoie un code d'erreur et un message
+            return res.status(400).json({ message: "Catégorie existe déjà." });
+        }
+
+        const updatedCategory = await Category.findById(req.params.id);
 
         // Mettre à jour le titre de la catégorie
-        category.title = req.body.title;
+        updatedCategory.title = req.body.title;
 
         // Enregistrer les modifications
-        await category.save();
+        await updatedCategory.save();
 
         // Retourner un message de succès
-        return res.json({
-            message: "Catégorie mise à jour avec succès",
-        });
+        return res.json(updatedCategory);
     } catch (error) {
         // Retourner un message d'erreur
         return res.status(400).json({ message: error.message });
     }
 };
 
-// Cette fonction permet de supprimer une catégorie
+// Suppression d'une catégorie
 exports.delete = async (req, res) => {
     try {
-        // Récupérer la catégorie à partir de son identifiant
+        // Recherche de la catégorie
         const category = await Category.findById(req.params.id);
-        // Vérifier que la catégorie existe
+        // Vérification de l'existence de la catégorie
         if (!category) {
-            return res.status(404).send({ message: "Category not found" });
+            return res.status(404).send({ message: "Catégorie introuvable" });
         }
-        // Supprimer la catégorie et tous les articles associés
-        const response = await Category.deleteWithArticles(category._id);
-        // Retourner une réponse avec le statut 200 (OK)
-        return res.status(200).send(response);
+        // Suppression de la catégorie
+        const deletedCategory = await Category.findByIdAndDelete(category._id);
+        // Suppression des articles et commentaires liés à la catégorie
+        await Promise.all([
+            Article.deleteMany({ category: deletedCategory._id }),
+            Comment.deleteMany({
+                article: {
+                    $in: await Article.find({
+                        category: deletedCategory._id,
+                    }).distinct("_id"),
+                },
+            }),
+        ]);
+        // Retourne la catégorie supprimée
+        return res.status(200).send(deletedCategory);
     } catch (err) {
-        // Retourner une réponse avec le statut 403 (Forbidden)
+        // Gestion des erreurs
         return res.status(403).send(err);
     }
 };
