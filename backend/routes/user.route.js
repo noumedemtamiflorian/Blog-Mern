@@ -1,12 +1,13 @@
 const express = require("express");
-
-const router = express.Router();
+const { requireAuth, requireAdmin } = require("../config/jwt");
 const userController = require("../controllers/user.controller");
 
-router.post("/resetPassword", userController.resetPassword);
-router.get("/", userController.findOne);
-router.get("/:id", userController.findAll);
-router.put("/:id", userController.update);
-router.delete("/:id", userController.delete);
+const router = express.Router();
+
+router.post("/resetPassword", requireAuth, userController.resetPassword);
+router.get("/", requireAdmin, userController.findOne);
+router.get("/:id", requireAdmin, userController.findAll);
+router.put("/:id", requireAdmin, userController.update);
+router.delete("/:id", requireAdmin, userController.delete);
 
 module.exports = router;
