@@ -1,5 +1,6 @@
 // Importer l'utilitaire Express
 const express = require("express");
+const { requireAdmin } = require("../config/jwt");
 
 // Importer le contrôleur d'article
 const articleController = require("../controllers/article.controller");
@@ -7,19 +8,19 @@ const articleController = require("../controllers/article.controller");
 // Création du routeur Express
 const router = express.Router();
 
-// Crée un nouvel article
-router.post("/", articleController.create);
-
 // ajouter une route pour obtenir tous les articles
 router.get("/", articleController.findAll);
 
 // Récupérer un article avec son ID
 router.get("/:id", articleController.findOne);
 
+// Crée un nouvel article
+router.post("/", requireAdmin, articleController.create);
+
 // Mettre à jour un article
-router.put("/:id", articleController.update);
+router.put("/:id", requireAdmin, articleController.update);
 
 // Supprimer un article
-router.delete("/:id", articleController.delete);
+router.delete("/:id", requireAdmin, articleController.delete);
 
 module.exports = router;
