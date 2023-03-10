@@ -12,7 +12,6 @@ const UserSchema = new Schema({
         default: "user",
         required: true,
     },
-    articles: [{ type: Schema.Types.ObjectId, ref: "Article" }],
     comments: [{ type: Schema.Types.ObjectId, ref: "Comment" }],
 });
 
