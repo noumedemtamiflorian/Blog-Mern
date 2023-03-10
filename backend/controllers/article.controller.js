@@ -52,6 +52,12 @@ exports.findOne = async (req, res) => {
             // Sélectionne le titre et le contenu des commentaires
             select: "title content",
         });
+
+        if (!article) {
+            // Si l'article n'existe pas, renvoie un code d'erreur 404
+            return res.status(404).json({ message: "Article not found" });
+        }
+
         // Renvoie l'article au client
         return res.json(article);
     } catch (err) {

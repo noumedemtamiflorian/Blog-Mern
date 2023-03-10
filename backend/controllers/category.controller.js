@@ -57,6 +57,10 @@ exports.findOne = async (req, res) => {
             path: "articles",
             select: "title description image",
         });
+        // Si la catégorie n'existe pas, retourner un code d'erreur 404
+        if (!category) {
+            return res.status(404).json({ message: "Category not found" });
+        }
         // Retourner la catégorie trouvée
         return res.json(category);
     } catch (error) {

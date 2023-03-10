@@ -5,9 +5,9 @@ const userController = require("../controllers/user.controller");
 const router = express.Router();
 
 router.post("/resetPassword", requireAuth, userController.resetPassword);
-router.get("/", requireAdmin, userController.findOne);
-router.get("/:id", requireAdmin, userController.findAll);
-router.put("/:id", requireAdmin, userController.update);
-router.delete("/:id", requireAdmin, userController.delete);
+router.get("/", requireAdmin, userController.findAll);
+router.get("/:id", requireAuth, userController.findOne);
+router.put("/:id", requireAuth, userController.update);
+router.delete("/:id", requireAuth, userController.delete);
 
 module.exports = router;

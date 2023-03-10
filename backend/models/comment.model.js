@@ -9,6 +9,9 @@ const CommentSchema = new Schema({
 
     // Référence à l'article auquel le commentaire est lié
     article: { type: Schema.Types.ObjectId, ref: "Article", required: true },
+
+    // Référence à l'user auquel le commentaire est lié
+    user: { type: Schema.Types.ObjectId, ref: "User", required: true },
 });
 
 // Exporter le modèle de commentaire
